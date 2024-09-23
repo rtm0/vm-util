@@ -2,7 +2,6 @@ package internal
 
 import (
 	"bytes"
-	"fmt"
 	"io"
 	"log/slog"
 	"net"
@@ -16,12 +15,18 @@ import (
 type Client struct {
 	logger        *slog.Logger
 	httpCli       *http.Client
-	insertURL     string
+	writeURL      string
 	queryRangeURL string
 }
 
+type ClientOptions struct {
+	MaxConns      int
+	WriteURL      string
+	QueryRangeURL string
+}
+
 // NewClient creates a new VM client.
-func NewClient(logger *slog.Logger, addr string, maxConns int) *Client {
+func NewClient(logger *slog.Logger, opts *ClientOptions) *Client {
 	return &Client{
 		logger: logger,
 		httpCli: &http.Client{
@@ -30,22 +35,21 @@ func NewClient(logger *slog.Logger, addr string, maxConns int) *Client {
 					Timeout:   30 * time.Second,
 					KeepAlive: 30 * time.Second,
 				}).DialContext,
-				MaxIdleConns:        maxConns,
+				MaxIdleConns:        opts.MaxConns,
 				IdleConnTimeout:     30 * time.Second,
-				MaxIdleConnsPerHost: maxConns,
-				MaxConnsPerHost:     maxConns,
+				MaxIdleConnsPerHost: opts.MaxConns,
+				MaxConnsPerHost:     opts.MaxConns,
 			},
 		},
-		insertURL: fmt.Sprintf("http://%s/api/v1/import/prometheus", addr),
+		writeURL: opts.WriteURL,
 		// queryRangeURL: fmt.Sprintf("http://%s/prometheus/api/v1/query_range", addr),
-		queryRangeURL: fmt.Sprintf("http://%s/select/0/prometheus/api/v1/query_range", addr),
+		queryRangeURL: opts.QueryRangeURL, // fmt.Sprintf("http://%s/select/0/prometheus/api/v1/query_range", addr),
 	}
 }
 
-// Insert inserts a data into vmstorage in Prometheus exposition format at
-// `/api/v1/import/prometheus`.
-func (c *Client) Insert(data string) {
-	res, err := c.httpCli.Post(c.insertURL, "text/plain", strings.NewReader(data))
+// Write writes data into vmstorage.
+func (c *Client) Write(data string) {
+	res, err := c.httpCli.Post(c.writeURL, "text/plain", strings.NewReader(data))
 	if err != nil {
 		c.logger.Error("failed to post data", "err", err)
 		return
