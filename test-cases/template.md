@@ -4,8 +4,6 @@
 
 ### Description
 
-By default, VM single must allow to delete up to 1e6 unique time series.
-
 ### Test Steps
 
 ### Expected Result
