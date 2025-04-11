@@ -15,12 +15,13 @@ import (
 
 var (
 	writeURL      = flag.String("writeURL", "http://localhost:8428/api/v1/import/prometheus", "vmstorage write URL")
-	metricPattern = flag.String("metricPattern", `metric_%d{machine="%d",generation="%d"} %d`, "a metric pattern that accepts four integers")
+	metricPattern = flag.String("metricPattern", `metric_%d{machine="%d",generation="%d"} %d %d`, "a metric pattern that accepts five integers")
 	numMachines   = flag.Int("numMachines", 50, "number of machines exporting metrics")
 	numMetrics    = flag.Int("numMetrics", 2000, "number of metrics exported by each machine")
 	churnRate     = flag.Int("churnRate", 0, "number of new metrics per second (0 means no churn rate)")
 	sendOnce      = flag.Bool("once", false, "if true each machine will send its metrics only once")
 	dryRun        = flag.Bool("dryRun", false, "if true, write metrics to stdout without sending")
+	adjustTime    = flag.Int64("adjustTime", 0, "this value will be added to the current timestamp")
 )
 
 func main() {
@@ -94,9 +95,10 @@ func data(machineID int, generations []int, genCh chan struct{}) string {
 		default:
 		}
 
-		value := rand.Intn(100)
 		gen := generations[metricID]
-		sb.WriteString(fmt.Sprintf(*metricPattern, metricID, machineID, gen, value))
+		value := rand.Intn(100)
+		ts := time.Now().UTC().UnixMilli() + *adjustTime
+		sb.WriteString(fmt.Sprintf(*metricPattern, metricID, machineID, gen, value, ts))
 		sb.WriteString("\n")
 	}
 	return sb.String()
