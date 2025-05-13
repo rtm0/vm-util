@@ -32,7 +32,6 @@ function diff_logs() {
 	echo "diff $lhs $rhs"
 	echo "meld $lhs $rhs"
 	diff $lhs $rhs
-	meld -n $lhs $rhs &
 	echo
 }
 
