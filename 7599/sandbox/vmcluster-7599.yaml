@@ -1,0 +1,62 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMCluster
+metadata:
+  name: benchmark-vm-cluster-7599
+  namespace: rtm0-test
+spec:
+  retentionPeriod: "6"
+  replicationFactor: 2
+  clusterVersion: "v1.119.0-cluster"
+  vminsert:
+    replicaCount: 1
+    image:
+      pullPolicy: Always
+    resources:
+      requests:
+        cpu: "1"
+        memory: 500Mi
+      limits:
+        cpu: "1"
+        memory: 500Mi
+  vmselect:
+    replicaCount: 2
+    image:
+      pullPolicy: Always
+    extraArgs:
+      search.maxQueryDuration: "600s"
+      search.logSlowQueryDuration: "30s"
+      dedup.minScrapeInterval: "1ms"
+    resources:
+      requests:
+        cpu: "2"
+        memory: 1Gi
+      limits:
+        cpu: "2"
+        memory: 1Gi
+  vmstorage:
+    replicaCount: 4
+    image:
+      pullPolicy: Always
+    extraArgs:
+      dedup.minScrapeInterval: "1ms"
+      "storage.trackMetricNamesStats": "true"
+    resources:
+      requests:
+        cpu: "2"
+        memory: 4Gi
+      limits:
+        cpu: "2"
+        memory: 4Gi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 200Gi
+          storageClassName: standard-rwo
+  requestsLoadBalancer:
+    enabled: true
+    spec:
+      image:
+        pullPolicy: "Always"
+        tag: "v1.119.0"
