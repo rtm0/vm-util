@@ -1,0 +1,11 @@
+#!/bin/bash
+
+apt update
+apt install -y tmux emacs-nox git make docker gcc
+
+test -f /usr/local/go/bin/go || (\
+  wget https://go.dev/dl/go1.24.4.linux-amd64.tar.gz && \
+  rm -rf /usr/local/go && \
+  tar -C /usr/local -xzf go1.24.4.linux-amd64.tar.gz)
+grep -q 'export PATH=$PATH:/usr/local/go/bin' /etc/bash.bashrc || \
+  echo 'export PATH=$PATH:/usr/local/go/bin' >> /etc/bash.bashrc

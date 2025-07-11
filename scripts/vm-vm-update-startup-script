@@ -1,0 +1,15 @@
+#!/bin/bash
+#
+# To view output `sudo journalctl -u google-startup-scripts.service`
+# To rerun `sudo google_metadata_script_runner startup`
+#
+# Docs: https://cloud.google.com/compute/docs/instances/startup-scripts/linux
+
+BASEDIR=$(dirname $(realpath $0))
+INSTANCE=$1
+ZONE=$2
+STARTUP_SCRIPT=${BASEDIR}/vm-vm-startup-script.sh
+
+gcloud compute instances add-metadata ${INSTANCE} \
+  --zone=${ZONE} \
+  --metadata-from-file=startup-script=${STARTUP_SCRIPT}

@@ -12,3 +12,4 @@ Time                 | Event
 2025-07-08T07:00:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-g66f4a2a98b
 2025-07-09T08:00:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-g08820d3837
 2025-07-09T15:00:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-g0a1cdce9e4
+2025-07-11T12:40:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-gda3bbb029c
