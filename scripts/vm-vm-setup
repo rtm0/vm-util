@@ -1,7 +1,23 @@
 #!/bin/bash
 
+if [[ $# -ne 2 ]]
+then
+    echo -e "Usage:\n\t$(basename $0) USER_EMAIL USER_NAME "
+    exit 1
+fi
+
+USER_EMAIL=$1
+USER_NAME="$2"
+
 sudo usermod -aG docker $USER
 # newgrp docker
+
+git config --global user.name "${USER_NAME}"
+git config --global user.email ${USER_EMAIL}
+git config --global core.editor emacs
+
+grep -q 'export PATH=$PATH:~/go/bin' ~/.bashrc || \
+  echo 'export PATH=$PATH:~/go/bin' >> ~/.bashrc
 
 git clone git@github.com:rtm0/vm-util.git ~/vm-util
 grep -q 'export PATH=$PATH:~/vm-util/scripts' ~/.bashrc || \
