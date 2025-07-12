@@ -1,0 +1,15 @@
+#!/bin/bash
+
+sudo usermod -aG docker $USER
+# newgrp docker
+
+git clone git@github.com:rtm0/vm-util.git ~/vm-util
+grep -q 'export PATH=$PATH:~/vm-util/scripts' ~/.bashrc || \
+  echo 'export PATH=$PATH:~/vm-util/scripts' >> ~/.bashrc
+. ~/.bashrc
+
+vm-keyadd
+
+mkdir -p ~/VictoriaMetrics/01
+cd ~/VictoriaMetrics/01
+~/vm-util/releases/git-setup-branches.sh
