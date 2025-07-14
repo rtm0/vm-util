@@ -1,0 +1,46 @@
+#!/bin/bash
+
+if [[ $# -ne 1 ]]
+then
+	echo -e "Usage:\n\t$(basename $0) NAME"
+	exit 1
+fi
+
+NAME=$1
+BENCHMARKS=(
+  BenchmarkStorageAddRows \
+  BenchmarkStorageAddRows_VariousTimeRanges \
+  BenchmarkStorageInsertWithAndWithoutPerDayIndex \
+  BenchmarkStorageSearchMetricNames_VariousTimeRanges \
+  BenchmarkStorageSearchLabelNames_VariousTimeRanges \
+  BenchmarkStorageSearchLabelValues_VariousTimeRanges \
+  BenchmarkStorageSearchTagValueSuffixes_VariousTimeRanges \
+  BenchmarkStorageSearchGraphitePaths_VariousTimeRanges \
+  BenchmarkSearch_VariousTimeRanges
+)
+
+for b in "${BENCHMARKS[@]}"
+do
+  LOGFILE=/tmp/${NAME}-${b}.log
+  CPUFILE=/tmp/${NAME}-${b}.cpuprofile
+  go test ./lib/storage -run="^$" \
+    -bench="^${b}$" \
+    -count=10 \
+	-timeout=1h \
+	-benchmem \
+    -cpuprofile ${CPUFILE} \
+    --loggerLevel=ERROR \
+    | tee ${LOGFILE}
+
+  echo
+  echo ${LOGFILE}
+  echo ${CPUFILE}
+  echo
+done
+
+COMBINED_LOGFILE=/tmp/${NAME}.log
+rm -f ${COMBINED_LOGFILE}
+cat /tmp/${NAME}-*.log >> ${COMBINED_LOGFILE}
+echo
+echo ${NAME}=${COMBINED_LOGFILE}
+echo
