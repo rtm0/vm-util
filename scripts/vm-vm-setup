@@ -24,6 +24,8 @@ grep -q 'export PATH=$PATH:~/vm-util/scripts' ~/.bashrc || \
   echo 'export PATH=$PATH:~/vm-util/scripts' >> ~/.bashrc
 source ~/.bashrc
 
+go install golang.org/x/perf/cmd/benchstat@latest
+
 vm-keyadd
 
 mkdir -p ~/VictoriaMetrics/01

@@ -21,8 +21,8 @@ BENCHMARKS=(
 
 for b in "${BENCHMARKS[@]}"
 do
-  LOGFILE=/tmp/${NAME}-${b}.log
-  CPUFILE=/tmp/${NAME}-${b}.cpuprofile
+  LOGFILE=~/${NAME}-${b}.log
+  CPUFILE=~/${NAME}-${b}.cpuprofile
   go test ./lib/storage -run="^$" \
     -bench="^${b}$" \
     -count=10 \
@@ -38,9 +38,9 @@ do
   echo
 done
 
-COMBINED_LOGFILE=/tmp/${NAME}.log
+COMBINED_LOGFILE=~/${NAME}.log
 rm -f ${COMBINED_LOGFILE}
-cat /tmp/${NAME}-*.log >> ${COMBINED_LOGFILE}
+cat ~/${NAME}-*.log >> ${COMBINED_LOGFILE}
 echo
 echo ${NAME}=${COMBINED_LOGFILE}
 echo
