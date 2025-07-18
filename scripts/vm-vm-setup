@@ -2,7 +2,7 @@
 
 if [[ $# -ne 2 ]]
 then
-    echo -e "Usage:\n\t$(basename $0) USER_EMAIL USER_NAME "
+    echo -e "Usage:\n\t$(basename $0) USER_EMAIL USER_NAME"
     exit 1
 fi
 

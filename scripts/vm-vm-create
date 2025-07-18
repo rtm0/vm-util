@@ -2,8 +2,8 @@
 
 BASEDIR=$(dirname $(realpath $0))
 INSTANCE=${1:-rtm0-$(date +%s)}
-MACHINE_TYPE=${2:-e2-standard-8}
-ZONE=${3:-europe-west10-a}
+ZONE=${2:-europe-west10-a}
+MACHINE_TYPE=${3:-e2-standard-8}
 STARTUP_SCRIPT=${BASEDIR}/vm-vm-startup-script
 
 gcloud compute instances create ${INSTANCE} \
