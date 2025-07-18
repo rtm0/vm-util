@@ -13,3 +13,4 @@ Time                 | Event
 2025-07-09T08:00:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-g08820d3837
 2025-07-09T15:00:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-g0a1cdce9e4
 2025-07-11T12:40:00Z | Deployed vmstorage:heads-issue-7599-cluster-0-gda3bbb029c
+2025-07-17T14:30:00Z | New v1.120.0-cluster deployment to test downgrade. Next - deploy pt index and then legacy again.

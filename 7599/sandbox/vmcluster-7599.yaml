@@ -36,7 +36,7 @@ spec:
   vmstorage:
     replicaCount: 4
     image:
-      tag: heads-issue-7599-cluster-0-gda3bbb029c
+      # tag: heads-issue-7599-cluster-0-gda3bbb029c
       pullPolicy: Always
     extraArgs:
       dedup.minScrapeInterval: "1ms"
