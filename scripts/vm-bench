@@ -7,6 +7,7 @@ then
 fi
 
 NAME=$1
+
 BENCHMARKS=(
   BenchmarkStorageAddRows \
   BenchmarkStorageAddRows_VariousTimeRanges \
@@ -32,6 +33,7 @@ do
     --loggerLevel=ERROR \
     | tee ${LOGFILE}
 
+  echo -e "\n\n" >> ${LOGFILE}
   echo
   echo ${LOGFILE}
   echo ${CPUFILE}

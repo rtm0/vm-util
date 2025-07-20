@@ -4,11 +4,13 @@ BASEDIR=$(dirname $(realpath $0))
 INSTANCE=${1:-rtm0-$(date +%s)}
 ZONE=${2:-europe-west10-a}
 MACHINE_TYPE=${3:-e2-standard-8}
+CPU_PLATFORM="${4}"
 STARTUP_SCRIPT=${BASEDIR}/vm-vm-startup-script
 
 gcloud compute instances create ${INSTANCE} \
-  --machine-type=${MACHINE_TYPE} \
   --zone=${ZONE} \
+  --machine-type=${MACHINE_TYPE} \
+  --min-cpu-platform="${CPU_PLATFORM}" \
   --create-disk=auto-delete=yes,boot=yes,device-name=${INSTANCE},mode=rw,size=100,type=pd-balanced,image=projects/debian-cloud/global/images/debian-12-bookworm-v20250709 \
   --metadata-from-file=startup-script=${STARTUP_SCRIPT} \
   --quiet

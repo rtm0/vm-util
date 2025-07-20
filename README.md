@@ -42,3 +42,4 @@
 	# Generate the token at https://github.com/settings/tokens
 	export GITHUB_TOKEN=
     ```
+10. Set up multi-platform builds: https://docs.docker.com/build/building/multi-platform/

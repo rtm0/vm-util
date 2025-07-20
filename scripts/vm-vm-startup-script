@@ -16,7 +16,7 @@ echo \
 apt update
 
 apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-apt install -y tmux emacs-nox git make gcc
+apt install -y tmux emacs-nox git make gcc zip
 
 test -f /usr/local/go/bin/go || (\
   wget https://go.dev/dl/go1.24.4.linux-amd64.tar.gz && \
