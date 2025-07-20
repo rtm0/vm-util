@@ -26,4 +26,4 @@ grep -q 'export PATH=$PATH:~/vm-util/scripts' ~/.bashrc || \
 
 mkdir -p ~/VictoriaMetrics/01
 cd ~/VictoriaMetrics/01
-~/vm-util/releases/git-setup-branches.sh
+~/vm-util/scripts/vm-branch-setup
