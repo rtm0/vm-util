@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [[ $# -ne 3 ]]
+then
+	echo -e "Usage:\n\t$(basename $0) INSTANCE ZONE REMOTE_FILE_PATH"
+	exit 1
+fi
+INSTANCE=$1
+ZONE=$2
+REMOTE_FILE_PATH=$3
+LOCAL_FILE_PATH=~/$(basename ${REMOTE_FILE_PATH})
+
+gcloud compute scp ${INSTANCE}:${REMOTE_FILE_PATH} --zone=${ZONE} ${LOCAL_FILE_PATH}
