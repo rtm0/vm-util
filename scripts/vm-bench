@@ -1,12 +1,14 @@
 #!/bin/bash
 
-if [[ $# -ne 1 ]]
+if [[ $# -lt 1 ]]
 then
-	echo -e "Usage:\n\t$(basename $0) NAME"
+	echo -e "Usage:\n\t$(basename $0) NAME [COUNT]"
 	exit 1
 fi
 
 NAME=$1
+COUNT=${2:-10}
+PREFIX=${NAME}-count${COUNT}
 
 BENCHMARKS=(
   BenchmarkStorageAddRows \
@@ -22,12 +24,13 @@ BENCHMARKS=(
 
 for b in "${BENCHMARKS[@]}"
 do
-  LOGFILE=~/${NAME}-${b}.log
-  CPUFILE=~/${NAME}-${b}.cpuprofile
+  SUFFIX=$(echo ${b} | sed 's|/|-|g')
+  LOGFILE=~/${PREFIX}-${SUFFIX}.log
+  CPUFILE=~/${PREFIX}-${SUFFIX}.cpuprofile
   go test ./lib/storage -run="^$" \
     -bench="^${b}$" \
-    -count=10 \
-	-timeout=1h \
+    -count=${COUNT} \
+	-timeout=48h \
 	-benchmem \
     -cpuprofile ${CPUFILE} \
     --loggerLevel=ERROR \
@@ -40,9 +43,9 @@ do
   echo
 done
 
-COMBINED_LOGFILE=~/${NAME}.log
+COMBINED_LOGFILE=~/${PREFIX}.log
 rm -f ${COMBINED_LOGFILE}
-cat ~/${NAME}-*.log >> ${COMBINED_LOGFILE}
+cat ~/${PREFIX}-*.log >> ${COMBINED_LOGFILE}
 echo
-echo ${NAME}=${COMBINED_LOGFILE}
+echo ${PREFIX}=${COMBINED_LOGFILE}
 echo
