@@ -25,14 +25,22 @@ BENCHMARKS=(
 for b in "${BENCHMARKS[@]}"
 do
   SUFFIX=$(echo ${b} | sed 's|/|-|g')
+
   LOGFILE=~/${PREFIX}-${SUFFIX}.log
-  CPUFILE=~/${PREFIX}-${SUFFIX}.cpuprofile
+  CPUFILE=~/${PREFIX}-${SUFFIX}-cpu.pprof
+  MEMFILE=~/${PREFIX}-${SUFFIX}-mem.pprof
+  MUTEXFILE=~/${PREFIX}-${SUFFIX}-mutex.pprof
+  BLOCKFILE=~/${PREFIX}-${SUFFIX}-block.pprof
+
   go test ./lib/storage -run="^$" \
     -bench="^${b}$" \
     -count=${COUNT} \
-	-timeout=48h \
-	-benchmem \
-    -cpuprofile ${CPUFILE} \
+    -timeout=48h \
+    -benchmem \
+    -cpuprofile=${CPUFILE} \
+    -memprofile=${MEMFILE} \
+    -mutexprofile=${MUTEXFILE} \
+    -blockprofile=${BLOCKFILE} \
     --loggerLevel=ERROR \
     | tee ${LOGFILE}
 
@@ -40,6 +48,9 @@ do
   echo
   echo ${LOGFILE}
   echo ${CPUFILE}
+  echo ${MEMFILE}
+  echo ${MUTEXFILE}
+  echo ${BLOCKFILE}
   echo
 done
 
