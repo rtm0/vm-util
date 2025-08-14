@@ -6,7 +6,11 @@ metadata:
 spec:
   retentionPeriod: "6"
   replicationFactor: 2
-  clusterVersion: "v1.121.0-cluster"
+  clusterVersion: "v1.123.0-enterprise-cluster"
+  license:
+    keyRef:
+      key: license
+      name: vm-license
   vminsert:
     replicaCount: 1
     image:
@@ -21,11 +25,13 @@ spec:
   vmselect:
     replicaCount: 2
     image:
-      pullPolicy: Always
+      pullPolicy: "Always"
     extraArgs:
       search.maxQueryDuration: "600s"
       search.logSlowQueryDuration: "30s"
+      search.logSlowQueryStats: "1us"
       dedup.minScrapeInterval: "1ms"
+      "downsampling.period": '5d:10m,30d:30m,{__name__="up"}:40d:1h'
     resources:
       requests:
         cpu: "2"
@@ -35,12 +41,16 @@ spec:
         memory: 1Gi
   vmstorage:
     replicaCount: 4
+    rollingUpdateStrategyBehavior:
+      maxUnavailable: 100%
     image:
-      # tag: heads-issue-7599-cluster-0-gda3bbb029c
+      tag: heads-enterprise-cluster-0-g8398e6714c
       pullPolicy: Always
     extraArgs:
+      retentionFilter: '{instance=~"host-(0|1)"}:10d'
       dedup.minScrapeInterval: "1ms"
       "storage.trackMetricNamesStats": "true"
+      "downsampling.period": '5d:10m,30d:30m,{__name__="up"}:40d:1h'
     resources:
       requests:
         cpu: "2"
@@ -60,4 +70,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.121.0"
+        tag: "v1.123.0-enterprise"
