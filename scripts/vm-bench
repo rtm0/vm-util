@@ -14,12 +14,24 @@ BENCHMARKS=(
   BenchmarkStorageAddRows \
   BenchmarkStorageAddRows_VariousTimeRanges \
   BenchmarkStorageInsertWithAndWithoutPerDayIndex \
-  BenchmarkStorageSearchMetricNames_VariousTimeRanges \
-  BenchmarkStorageSearchLabelNames_VariousTimeRanges \
-  BenchmarkStorageSearchLabelValues_VariousTimeRanges \
-  BenchmarkStorageSearchTagValueSuffixes_VariousTimeRanges \
-  BenchmarkStorageSearchGraphitePaths_VariousTimeRanges \
-  BenchmarkSearch_VariousTimeRanges
+  BenchmarkSearchData_variableSeries \
+  BenchmarkSearchData_variableDeletedSeries \
+  BenchmarkSearchData_variableTimeRange \
+  BenchmarkSearchMetricNames_variableSeries \
+  BenchmarkSearchMetricNames_variableDeletedSeries \
+  BenchmarkSearchMetricNames_variableTimeRange \
+  BenchmarkSearchLabelNames_variableSeries \
+  BenchmarkSearchLabelNames_variableDeletedSeries \
+  BenchmarkSearchLabelNames_variableTimeRange \
+  BenchmarkSearchLabelValues_variableSeries \
+  BenchmarkSearchLabelValues_variableDeletedSeries \
+  BenchmarkSearchLabelValues_variableTimeRange \
+  BenchmarkSearchTagValueSuffixes_variableSeries \
+  BenchmarkSearchTagValueSuffixes_variableDeletedSeries \
+  BenchmarkSearchTagValueSuffixes_variableTimeRange \
+  BenchmarkSearchGraphitePaths_variableSeries \
+  BenchmarkSearchGraphitePaths_variableDeletedSeries \
+  BenchmarkSearchGraphitePaths_variableTimeRange
 )
 
 for b in "${BENCHMARKS[@]}"
