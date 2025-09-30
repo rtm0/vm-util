@@ -1,9 +1,0 @@
-apiVersion: operator.victoriametrics.com/v1beta1
-kind: VMServiceScrape
-metadata:
-  name: rtm0-test-metrics
-spec:
-  namespaceSelector:
-    matchNames: ["rtm0-test"]
-  endpoints:
-    - port: http
