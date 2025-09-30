@@ -1,3 +1,4 @@
 #!/bin/bash
 
+make victoria-metrics vmstorage vminsert vmselect
 make check-all test integration-test integration-test-legacy
