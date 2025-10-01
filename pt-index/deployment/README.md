@@ -16,3 +16,4 @@ Time                 | Event
 2025-07-17T14:30:00Z | New v1.120.0-cluster deployment to test downgrade. Next - deploy pt index and then legacy again.
 2025-08-14T09:20:00Z | Switch to v1.123.0-enterprise-cluster, deploy 9431 and the followup 9582
 2025-09-30T13:10:00Z | Switch to v1.126.0-enterprise-cluster
+2025-10-10T13:40:00Z | Switch to pt-index heads-issue-7599-enterprise-cluster-0-g879ec9d5dc
