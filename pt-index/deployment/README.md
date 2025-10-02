@@ -17,3 +17,4 @@ Time                 | Event
 2025-08-14T09:20:00Z | Switch to v1.123.0-enterprise-cluster, deploy 9431 and the followup 9582
 2025-09-30T13:10:00Z | Switch to v1.126.0-enterprise-cluster
 2025-10-10T13:40:00Z | Switch to pt-index heads-issue-7599-enterprise-cluster-0-g879ec9d5dc
+2025-10-02T15:45:00Z | Switch back to v1.126.0-enterprise-cluster
