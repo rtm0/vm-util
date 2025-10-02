@@ -1,0 +1,336 @@
+test -d /tmp/tsbs/cmd/tsbs_run_queries_victoriametrics || (git clone https://github.com/timescale/tsbs.git /tmp/tsbs && \
+	cd /tmp/tsbs/cmd/tsbs_generate_data && GOBIN=/tmp/tsbs/bin go install && \
+	cd /tmp/tsbs/cmd/tsbs_generate_queries && GOBIN=/tmp/tsbs/bin go install && \
+	cd /tmp/tsbs/cmd/tsbs_load_victoriametrics && GOBIN=/tmp/tsbs/bin go install && \
+	cd /tmp/tsbs/cmd/tsbs_run_queries_victoriametrics && GOBIN=/tmp/tsbs/bin go install)
+test -f /tmp/tsbs-data-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-80s.gz || /tmp/tsbs/bin/tsbs_generate_data \
+	--format=victoriametrics \
+	--use-case=cpu-only  \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--log-interval=80s \
+	| gzip > /tmp/tsbs-data-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-80s.gz
+cat /tmp/tsbs-data-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-80s.gz | gunzip | /tmp/tsbs/bin/tsbs_load_victoriametrics \
+	--workers=4 \
+	--urls=http://localhost:8428/write \
+	2>/dev/tty | tee /tmp/tsbs-load-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-80s.csv
+time,per. metric/s,metric total,overall metric/s,per. row/s,row total,overall row/s
+1759337201,159999.00,1.600000E+06,159999.00,15999.90,1.600000E+05,15999.90
+1759337211,1490000.28,1.650000E+07,824997.51,149000.03,1.650000E+06,82499.75
+1759337221,1780000.25,3.430000E+07,1143331.08,178000.03,3.430000E+06,114333.11
+1759337231,1820000.01,5.250000E+07,1312498.06,182000.00,5.250000E+06,131249.81
+1759337241,1849999.49,7.100000E+07,1419998.25,184999.95,7.100000E+06,141999.82
+1759337251,1800000.44,8.900000E+07,1483331.87,180000.04,8.900000E+06,148333.19
+1759337261,1770000.12,1.067000E+08,1524284.44,177000.01,1.067000E+07,152428.44
+1759337271,1749999.88,1.242000E+08,1552498.85,174999.99,1.242000E+07,155249.88
+1759337281,1809999.89,1.423000E+08,1581110.06,180999.99,1.423000E+07,158111.01
+1759337291,1860000.20,1.609000E+08,1608999.05,186000.02,1.609000E+07,160899.91
+1759337301,1719999.90,1.781000E+08,1619090.03,171999.99,1.781000E+07,161909.00
+1759337311,1699999.88,1.951000E+08,1625832.52,169999.99,1.951000E+07,162583.25
+1759337321,1810000.41,2.132000E+08,1639999.27,181000.04,2.132000E+07,163999.93
+1759337331,1799999.47,2.312000E+08,1651427.85,179999.95,2.312000E+07,165142.79
+1759337341,1770000.22,2.489000E+08,1659332.67,177000.02,2.489000E+07,165933.27
+1759337351,1640000.07,2.653000E+08,1658124.39,164000.01,2.653000E+07,165812.44
+1759337361,1819999.75,2.835000E+08,1667646.47,181999.98,2.835000E+07,166764.65
+1759337371,1759999.93,3.011000E+08,1672777.21,175999.99,3.011000E+07,167277.72
+1759337381,1809999.92,3.192000E+08,1679999.46,180999.99,3.192000E+07,167999.95
+1759337391,1620000.39,3.354000E+08,1676999.51,162000.04,3.354000E+07,167699.95
+1759337401,1840000.01,3.538000E+08,1684761.43,184000.00,3.538000E+07,168476.14
+1759337411,1719999.85,3.710000E+08,1686363.18,171999.99,3.710000E+07,168636.32
+1759337421,1830000.16,3.893000E+08,1692608.26,183000.02,3.893000E+07,169260.83
+1759337431,1679999.63,4.061000E+08,1692082.90,167999.96,4.061000E+07,169208.29
+1759337441,1789997.92,4.240000E+08,1695999.51,178999.79,4.240000E+07,169599.95
+1759337451,1840002.27,4.424000E+08,1701538.07,184000.23,4.424000E+07,170153.81
+1759337461,1729999.97,4.597000E+08,1702592.21,173000.00,4.597000E+07,170259.22
+1759337471,1750000.20,4.772000E+08,1704285.35,175000.02,4.772000E+07,170428.54
+1759337481,1769999.90,4.949000E+08,1706551.37,176999.99,4.949000E+07,170655.14
+1759337491,1800000.14,5.129000E+08,1709666.33,180000.01,5.129000E+07,170966.63
+1759337501,1769999.86,5.306000E+08,1711612.57,176999.99,5.306000E+07,171161.26
+1759337511,1690000.24,5.475000E+08,1710937.19,169000.02,5.475000E+07,171093.72
+1759337521,1589999.92,5.634000E+08,1707272.42,158999.99,5.634000E+07,170727.24
+1759337531,1640000.07,5.798000E+08,1705293.82,164000.01,5.798000E+07,170529.38
+1759337541,1619999.61,5.960000E+08,1702856.85,161999.96,5.960000E+07,170285.68
+1759337551,1770000.44,6.137000E+08,1704721.94,177000.04,6.137000E+07,170472.19
+1759337561,1699999.94,6.307000E+08,1704594.32,169999.99,6.307000E+07,170459.43
+1759337571,1679999.40,6.475000E+08,1703947.09,167999.94,6.475000E+07,170394.71
+1759337581,1770000.47,6.652000E+08,1705640.76,177000.05,6.652000E+07,170564.08
+1759337591,1740000.16,6.826000E+08,1706499.75,174000.02,6.826000E+07,170649.97
+1759337601,1669999.71,6.993000E+08,1705609.50,166999.97,6.993000E+07,170560.95
+1759337611,1749999.84,7.168000E+08,1706666.42,174999.98,7.168000E+07,170666.64
+1759337621,1820000.36,7.350000E+08,1709302.09,182000.04,7.350000E+07,170930.21
+1759337631,1779999.98,7.528000E+08,1710908.86,178000.00,7.528000E+07,171090.89
+1759337641,1770000.38,7.705000E+08,1712222.00,177000.04,7.705000E+07,171222.20
+1759337651,1609999.81,7.866000E+08,1709999.78,160999.98,7.866000E+07,170999.98
+1759337661,1810000.10,8.047000E+08,1712127.45,181000.01,8.047000E+07,171212.74
+1759337671,1769999.44,8.224000E+08,1713333.11,176999.94,8.224000E+07,171333.31
+1759337681,1740000.48,8.398000E+08,1713877.35,174000.05,8.398000E+07,171387.73
+1759337691,1750000.18,8.573000E+08,1714599.80,175000.02,8.573000E+07,171459.98
+1759337701,1689999.83,8.742000E+08,1714117.45,168999.98,8.742000E+07,171411.74
+1759337711,1789999.70,8.921000E+08,1715576.72,178999.97,8.921000E+07,171557.67
+1759337721,1780000.29,9.099000E+08,1716792.26,178000.03,9.099000E+07,171679.23
+1759337731,1789999.12,9.278000E+08,1718147.95,178999.91,9.278000E+07,171814.79
+1759337741,1630000.58,9.441000E+08,1716545.27,163000.06,9.441000E+07,171654.53
+1759337751,1780000.21,9.619000E+08,1717678.39,178000.02,9.619000E+07,171767.84
+1759337761,1770000.04,9.796000E+08,1718596.31,177000.00,9.796000E+07,171859.63
+1759337771,1799999.52,9.976000E+08,1719999.82,179999.95,9.976000E+07,171999.98
+1759337781,1680000.17,1.014400E+09,1719321.86,168000.02,1.014400E+08,171932.19
+1759337791,1760000.32,1.032000E+09,1719999.83,176000.03,1.032000E+08,171999.98
+1759337801,1789999.54,1.049900E+09,1721147.37,178999.95,1.049900E+08,172114.74
+1759337811,1690000.38,1.066800E+09,1720645.00,169000.04,1.066800E+08,172064.50
+
+Summary:
+loaded 1080000000 metrics in 629.088sec with 4 workers (mean rate 1716771.07 metrics/sec)
+loaded 108000000 rows in 629.088sec with 4 workers (mean rate 171677.11 rows/sec)
+curl -s http://localhost:8428/metrics | grep \
+	-e process_cpu_seconds_user_total \
+	-e process_cpu_seconds_system_total \
+	-e process_cpu_seconds_total \
+	-e process_resident_memory_peak_bytes \
+	-e process_resident_memory_bytes \
+	-e process_io_read_bytes_total \
+	-e process_io_written_bytes_total || true
+process_cpu_seconds_system_total 217.93
+process_cpu_seconds_total 3901.61
+process_cpu_seconds_user_total 3683.68
+process_resident_memory_bytes 1440911360
+process_resident_memory_peak_bytes 2825252864
+process_io_read_bytes_total 42190959504
+process_io_written_bytes_total 5635185803
+make tsbs-generate-queries TSBS_QUERY_TYPE=single-groupby-1-1-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-single-groupby-1-1-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=single-groupby-1-1-1 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-single-groupby-1-1-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=single-groupby-1-1-12
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-single-groupby-1-1-12-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=single-groupby-1-1-12 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-single-groupby-1-1-12-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=single-groupby-1-8-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-single-groupby-1-8-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=single-groupby-1-8-1 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-single-groupby-1-8-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=single-groupby-5-1-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-single-groupby-5-1-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=single-groupby-5-1-1 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-single-groupby-5-1-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=single-groupby-5-1-12
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-single-groupby-5-1-12-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=single-groupby-5-1-12 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-single-groupby-5-1-12-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=single-groupby-5-8-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-single-groupby-5-8-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=single-groupby-5-8-1 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-single-groupby-5-8-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=cpu-max-all-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-cpu-max-all-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=cpu-max-all-1 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-cpu-max-all-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=cpu-max-all-8
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-cpu-max-all-8-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=cpu-max-all-8 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-cpu-max-all-8-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=double-groupby-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-double-groupby-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=double-groupby-1 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-double-groupby-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=double-groupby-5
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-double-groupby-5-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=double-groupby-5 \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-double-groupby-5-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-generate-queries TSBS_QUERY_TYPE=double-groupby-all
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+test -f /tmp/tsbs-queries-double-groupby-all-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz || /tmp/tsbs/bin/tsbs_generate_queries \
+	--format=victoriametrics \
+	--use-case=cpu-only \
+	--seed=8428 \
+	--scale=100000 \
+	--timestamp-start=2025-09-30T00:00:00Z \
+	--timestamp-end=2025-10-01T00:00:00Z \
+	--query-type=double-groupby-all \
+	--queries=1000 \
+	| gzip > /tmp/tsbs-queries-double-groupby-all-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=single-groupby-1-1-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-single-groupby-1-1-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 2296.15 queries/sec):
+VictoriaMetrics 1 cpu metric(s), random    1 hosts, random 1h0m0s by 1m:
+min:     0.30ms, med:     1.29ms, mean:     1.70ms, max:   14.09ms, stddev:     1.32ms, sum:   1.7sec, count: 1000
+all queries                                                            :
+min:     0.30ms, med:     1.29ms, mean:     1.70ms, max:   14.09ms, stddev:     1.32ms, sum:   1.7sec, count: 1000
+wall clock time: 0.440167sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=single-groupby-1-1-12
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-single-groupby-1-1-12-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 2436.61 queries/sec):
+VictoriaMetrics 1 cpu metric(s), random    1 hosts, random 12h0m0s by 1m:
+min:     0.65ms, med:     1.27ms, mean:     1.61ms, max:    9.36ms, stddev:     0.96ms, sum:   1.6sec, count: 1000
+all queries                                                             :
+min:     0.65ms, med:     1.27ms, mean:     1.61ms, max:    9.36ms, stddev:     0.96ms, sum:   1.6sec, count: 1000
+wall clock time: 0.413218sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=single-groupby-1-8-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-single-groupby-1-8-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 2007.92 queries/sec):
+VictoriaMetrics 1 cpu metric(s), random    8 hosts, random 1h0m0s by 1m:
+min:     0.71ms, med:     1.56ms, mean:     1.95ms, max:   15.74ms, stddev:     1.47ms, sum:   1.9sec, count: 1000
+all queries                                                            :
+min:     0.71ms, med:     1.56ms, mean:     1.95ms, max:   15.74ms, stddev:     1.47ms, sum:   1.9sec, count: 1000
+wall clock time: 0.501771sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=single-groupby-5-1-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-single-groupby-5-1-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 1589.53 queries/sec):
+VictoriaMetrics 5 cpu metric(s), random    1 hosts, random 1h0m0s by 1m:
+min:     0.68ms, med:     1.89ms, mean:     2.47ms, max:   14.88ms, stddev:     1.68ms, sum:   2.5sec, count: 1000
+all queries                                                            :
+min:     0.68ms, med:     1.89ms, mean:     2.47ms, max:   14.88ms, stddev:     1.68ms, sum:   2.5sec, count: 1000
+wall clock time: 0.632551sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=single-groupby-5-1-12
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-single-groupby-5-1-12-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 984.02 queries/sec):
+VictoriaMetrics 5 cpu metric(s), random    1 hosts, random 12h0m0s by 1m:
+min:     1.65ms, med:     3.07ms, mean:     4.03ms, max:   15.61ms, stddev:     2.48ms, sum:   4.0sec, count: 1000
+all queries                                                             :
+min:     1.65ms, med:     3.07ms, mean:     4.03ms, max:   15.61ms, stddev:     2.48ms, sum:   4.0sec, count: 1000
+wall clock time: 1.020374sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=single-groupby-5-8-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-single-groupby-5-8-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 1174.01 queries/sec):
+VictoriaMetrics 5 cpu metric(s), random    8 hosts, random 1h0m0s by 1m:
+min:     1.33ms, med:     2.06ms, mean:     3.30ms, max:   40.14ms, stddev:     4.57ms, sum:   3.3sec, count: 1000
+all queries                                                            :
+min:     1.33ms, med:     2.06ms, mean:     3.30ms, max:   40.14ms, stddev:     4.57ms, sum:   3.3sec, count: 1000
+wall clock time: 0.858271sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=cpu-max-all-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-cpu-max-all-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 815.43 queries/sec):
+VictoriaMetrics max of all CPU metrics, random    1 hosts, random 8h0m0s by 1h:
+min:     0.72ms, med:     2.88ms, mean:     4.83ms, max:   43.93ms, stddev:     5.46ms, sum:   4.8sec, count: 1000
+all queries                                                                   :
+min:     0.72ms, med:     2.88ms, mean:     4.83ms, max:   43.93ms, stddev:     5.46ms, sum:   4.8sec, count: 1000
+wall clock time: 1.236306sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=cpu-max-all-8
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-cpu-max-all-8-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 617.68 queries/sec):
+VictoriaMetrics max of all CPU metrics, random    8 hosts, random 8h0m0s by 1h:
+min:     1.93ms, med:     3.59ms, mean:     6.29ms, max:  132.18ms, stddev:    10.35ms, sum:   6.3sec, count: 1000
+all queries                                                                   :
+min:     1.93ms, med:     3.59ms, mean:     6.29ms, max:  132.18ms, stddev:    10.35ms, sum:   6.3sec, count: 1000
+wall clock time: 1.629200sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+make tsbs-run-queries TSBS_QUERY_TYPE=double-groupby-1
+make[1]: Entering directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+cat /tmp/tsbs-queries-double-groupby-1-100000-2025-09-30T00:00:00Z-2025-10-01T00:00:00Z-1000.gz | gunzip | /tmp/tsbs/bin/tsbs_run_queries_victoriametrics --workers=4 --urls=http://localhost:8428
+Run complete after 1000 queries with 4 workers (Overall query rate 1.38 queries/sec):
+VictoriaMetrics mean of 1 metrics, all hosts, random 12h0m0s by 1h:
+min:  1921.66ms, med:  2778.49ms, mean:  2885.77ms, max: 5563.65ms, stddev:   530.53ms, sum: 2885.8sec, count: 1000
+all queries                                                       :
+min:  1921.66ms, med:  2778.49ms, mean:  2885.77ms, max: 5563.65ms, stddev:   530.53ms, sum: 2885.8sec, count: 1000
+wall clock time: 722.072100sec
+make[1]: Leaving directory '/home/rtm_victoriametrics_com/VictoriaMetrics/01/src'
+# make tsbs-run-queries TSBS_QUERY_TYPE=double-groupby-5
+# Too heavy: retrieves 1B samples
+# make tsbs-run-queries TSBS_QUERY_TYPE=double-groupby-all
