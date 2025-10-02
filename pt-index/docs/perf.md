@@ -77,26 +77,26 @@ Comparison of some important metrics
 Metric                             | v1.126.0    | pt-index    | diff %
 ---------------------------------- | ----------- | ----------- | ------
 process_cpu_seconds_system_total   | 217.93      | 271.81      | +25
-process_cpu_seconds_total          | 3901.61     | 4197.49     |  +8
-process_cpu_seconds_user_total     | 3683.68     | 3925.68     |  +7
+process_cpu_seconds_total          | 3901.61     | 4197.49     | +8
+process_cpu_seconds_user_total     | 3683.68     | 3925.68     | +7
 process_resident_memory_bytes      | 1440911360  | 1246068736  | -12
-process_resident_memory_peak_bytes | 2825252864  | 2843361280  |  +1
-process_io_read_bytes_total        | 42190959504 | 42581097874 |  +1
-process_io_written_bytes_total     | 5635185803  | 5920760702  |  +5
+process_resident_memory_peak_bytes | 2825252864  | 2843361280  | +1
+process_io_read_bytes_total        | 42190959504 | 42581097874 | +1
+process_io_written_bytes_total     | 5635185803  | 5920760702  | +5
 
 Query summary:
 
-Query Type            | v1.126.0 | pt-index
---------------------- | -------- | --------
-single-groupby-1-1-1  | 
-single-groupby-1-1-12 |
-single-groupby-1-8-1  |
-single-groupby-5-1-1  |
-single-groupby-5-1-12 |
-single-groupby-5-8-1  |
-cpu-max-all-1         |
-cpu-max-all-8         |
-double-groupby-1      |
+Query Type            | v1.126.0 queries/s | pt-index queries/s | diff %
+--------------------- | ------------------ | ------------------ | ------
+single-groupby-1-1-1  | 2296.15            | 3271.67            | +42
+single-groupby-1-1-12 | 2436.61            | 3040.75            | +25
+single-groupby-1-8-1  | 2007.92            | 2082.20            | +4
+single-groupby-5-1-1  | 1589.53            | 1924.29            | +21
+single-groupby-5-1-12 |  984.02            | 1256.50            | +28
+single-groupby-5-8-1  | 1174.01            | 1152.70            | -2
+cpu-max-all-1         |  815.43            | 1493.25            | +83
+cpu-max-all-8         |  617.68            |  687.59            | +11
+double-groupby-1      |    1.38            |    1.34            | -3
 
 
 ## How to run
