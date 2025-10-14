@@ -169,25 +169,25 @@ pt-index version was used.
 
 Some examples:
 
-- **No churn rate and pt-index was used for less than a whole day**. After
+- `No churn rate and pt-index was used for less than a whole day`. After
   downgrade, it will still be possible to query all data because the all index
   records will be found in the legacy index because no new timeseries were
   registered.
-- **No churn rate and pt-index was used for more than a whole day**. After
+- `No churn rate and pt-index was used for more than a whole day`. After
   downgrade, no data will be found for that day if the query time range is
   <= 40 days. Even if no new timeseries were registered, vmstorage will read
   per-day index entries for that day and will find none. However, if the time
   range is > 40 days, it will find the data for that day because it will be
   using global index entries.
-- **High churn rate and pt-index was used for less than a whole day**. After the
+- `High churn rate and pt-index was used for less than a whole day`. After the
   downgrade, new metrics that appeared and then disappeared during the use of
   pt-index, will not be visible. Metrics that appeared during the use of
   pt-index and still "alive" after the downgrade won't be visible at first, but
   will gradually start to be visible as the new samples arrive.
-- **High churn rate and pt-index was used for more than a whole day**.
-  Similarly, after the downgrade, new metrics that appeared and then disappeared
-  during the use of pt-index, will not be visible. Metrics that appeared during
-  the use of pt-index and still "alive" after the downgrade won't be visible for
-  that day if the query time range is <= 40 days. But if the new samples arrive
-  and the time range is > 40 days, the data for those metrics will become
-  visible for queries again.
+- `High churn rate and pt-index was used for more than a whole day`. Similarly,
+  after the downgrade, new metrics that appeared and then disappeared during the
+  use of pt-index, will not be visible. Metrics that appeared during the use of
+  pt-index and still "alive" after the downgrade won't be visible for that day
+  if the query time range is <= 40 days. But if the new samples arrive and the
+  time range is > 40 days, the data for those metrics will become visible for
+  queries again.
