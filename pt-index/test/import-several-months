@@ -1,0 +1,11 @@
+#!/bin/bash
+
+START=$(TZ=UTC date --date=2025-01-01T00:00:00 +%s)
+END=$(TZ=UTC date +%s)
+
+for ((ts=$START; ts < $END; ts+=3600*24 ))
+do
+	curl -d "test 123 $ts" -X POST http://localhost:8428/api/v1/import/prometheus
+done
+
+

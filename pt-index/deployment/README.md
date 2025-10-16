@@ -18,3 +18,8 @@ Time                 | Event
 2025-09-30T13:10:00Z | Switch to v1.126.0-enterprise-cluster
 2025-10-10T13:40:00Z | Switch to pt-index heads-issue-7599-enterprise-cluster-0-g879ec9d5dc
 2025-10-02T15:45:00Z | Switch back to v1.126.0-enterprise-cluster
+2025-10-13T13:20:00Z | Switch to pt-index heads-issue-7599-enterprise-cluster-0-gc94c7bf55c
+2025-10-13T13:32:00Z | Switch to v1.127.0-enterprise-cluster
+2025-10-13T20:00:00Z | Switch to pt-index heads-issue-7599-enterprise-cluster-0-gc94c7bf55c
+2025-10-15T10:45:00Z | Switch to v1.127.0-enterprise-cluster
+2025-10-16T13:20:00Z | Switch to pt-index heads-issue-7599-enterprise-cluster-0-gc94c7bf55c

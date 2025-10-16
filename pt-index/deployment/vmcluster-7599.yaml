@@ -44,7 +44,7 @@ spec:
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
-      # tag: heads-issue-7599-enterprise-cluster-0-g879ec9d5dc
+      tag: heads-issue-7599-enterprise-cluster-0-gc94c7bf55c
       pullPolicy: Always
     extraArgs:
       retentionFilter: '{instance=~"host-(0|1)"}:10d'
@@ -70,4 +70,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.126.0-enterprise"
+        tag: "v1.127.0-enterprise"
