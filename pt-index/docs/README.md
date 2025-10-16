@@ -162,32 +162,39 @@ After upgrading to pt-index version, vmstorage will start writing index entries
 to pt-index for both new and existing timeseries. Since previous versions do not
 know about pt-index and can only search the legacy index, downgrading will cause
 that some timeseries ingested after upgrade won't be found on some time ranges
-after the downgrade. It is important to note, that the data is not deleted it
-just can't be queried because older versions can't query partition index. How
-much data will become invisible depends on the churn rate and how much time the
-pt-index version was used.
+after the downgrade.
 
-Some examples:
+It is important to note, that downgrade will not cause any data to get corrupted
+or deleted. It just won't be possible to query that data because older versions
+do not know about the pt-index. How much data will become invisible depends on
+the churn rate and how much time the pt-index version was used. And upgrading to
+pt-index after downgrade will make all the data visible again.
 
-- `No churn rate and pt-index was used for less than a whole day`. After
-  downgrade, it will still be possible to query all data because the all index
-  records will be found in the legacy index because no new timeseries were
-  registered.
-- `No churn rate and pt-index was used for more than a whole day`. After
-  downgrade, no data will be found for that day if the query time range is
-  <= 40 days. Even if no new timeseries were registered, vmstorage will read
-  per-day index entries for that day and will find none. However, if the time
-  range is > 40 days, it will find the data for that day because it will be
-  using global index entries.
-- `High churn rate and pt-index was used for less than a whole day`. After the
-  downgrade, new metrics that appeared and then disappeared during the use of
-  pt-index, will not be visible. Metrics that appeared during the use of
-  pt-index and still "alive" after the downgrade won't be visible at first, but
-  will gradually start to be visible as the new samples arrive.
-- `High churn rate and pt-index was used for more than a whole day`. Similarly,
-  after the downgrade, new metrics that appeared and then disappeared during the
-  use of pt-index, will not be visible. Metrics that appeared during the use of
-  pt-index and still "alive" after the downgrade won't be visible for that day
-  if the query time range is <= 40 days. But if the new samples arrive and the
-  time range is > 40 days, the data for those metrics will become visible for
-  queries again.
+Below are few examples.
+
+If the pt-index was used for a whole day, index and data queries for that day
+may return partial or no results at all:
+
+- Regardless of churn rate, index queries (such as getting the list of series
+  names, or label names, or label values) will return no results. This is
+  because vmstorage will perform per-day index lookup in the legacy indexDB and
+  it will be missing all the records for that day.
+- Regardless of churn rage, data queries (instant or range) will still return
+  partial (or even all) results, because the metric names will first be read
+  from `metricNameCache` before performing legacy indexDB lookup. If all the
+  metric names can be found in cache, then the response will be full, otherwise
+  it will be partial or even empty.
+
+Churn rate becomes important when the pt-index was used for less than one day,
+say for couple of hours. In this case some records for that day are present in
+legacy index already and will be added to it after the downgrade as the new
+samples arrive.
+
+- If there is no churn rate, index queries will return either 1) full result
+  right away (because per-day legacy index already have all the timeseries for
+  that day) or 2) partial result at first and full result later as the new
+  samples arrive and thus populate the index with missing timeseries.
+- If there is high churn rate, there can be timeseries that appeared and then
+  dissappeared while pt-index was in use. These timeseries will become fully
+  invisible for index queries. Data queries will may still return something due
+  to caching.
