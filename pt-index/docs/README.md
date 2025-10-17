@@ -198,3 +198,6 @@ samples arrive.
   dissappeared while pt-index was in use. These timeseries will become fully
   invisible for index queries. Data queries will may still return something due
   to caching.
+
+We have performed the `upgrage-downgrade-upgrade` test in our sandbox. Steps and
+results can be found [here](test.md#upgrade-downgrade-upgrade).

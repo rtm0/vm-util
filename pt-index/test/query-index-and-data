@@ -1,0 +1,29 @@
+#!/bin/bash
+
+if [[ $# -ne 2 ]]
+then
+	echo "Usage: $(basename $0) <YYYY-MM-DD> <version>"
+	exit 1
+fi
+
+BASEURL=http://localhost:8481/select/0/prometheus
+DATE=$1
+START=${DATE}T00:01:00
+END=${DATE}T23:59:59
+VERSION=$2
+
+curl ${BASEURL}/api/v1/series -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
+  | jq . \
+  | tee ${DATE}-metric-names-${VERSION}.json
+
+curl ${BASEURL}/api/v1/labels -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
+  | jq . \
+  | tee ${DATE}-label-names-${VERSION}.json
+
+curl ${BASEURL}/api/v1/label/node/values -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
+  | jq . \
+  | tee ${DATE}-label-values-${VERSION}.json
+
+curl ${BASEURL}/api/v1/query_range -d 'query=count(up)' -d "start=${START}" -d "end=${END}" -d "step=1h" \
+  | jq . \
+  | tee ${DATE}-data-${VERSION}.json
