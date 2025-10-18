@@ -91,7 +91,7 @@ During data retrieval, legacy and partition indexDBs will be queried
 concurrently. At first, most of the entries will be found in legacy indexDBs,
 but over time, as the partition index is filled in and new partitions are
 created, most of the index data will be coming from pt-index. See
-[benchmark results](#perf.md) for different cases.
+[benchmark results](perf.md) for different cases.
 
 Legacy indexDBs will not become fully read-only though. It is possible that new
 entries will be added to to them when a timeseries is deleted. For this reason
