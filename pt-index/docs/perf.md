@@ -145,3 +145,113 @@ make tsbs-plot-load \
   TSBS_LOAD_RESULT_CSV_FILE=~/tsbs-empty-vmsingle-v1.126.0-load.csv \
   TSBS_LOAD_RESULT_CSV_FILE_COMPARE=~/tsbs-empty-vmsingle-pt-index-load.csv
 ```
+
+## Index and Data Queries
+
+To test the performance of queries we use Go benchmarks. Specifically,
+we will be using `BenchmarkSearch` located in
+`lib/storage/storage_timing_test.go`. It allows to measure the performance of
+of most of the vmstorage query API, such as:
+
+- `SearchData` (used in [/api/v1/query_range](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1query_range))
+- `SeachMetricNames` (used in [/api/v1/series](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1series))
+- `SearchLabelNames` (used in [/api/v1/labels](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1labels))
+- `SearchLabelValues` (used in [/api/v1/label/…/values](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1labelvalues))
+- `SearchTagValueSuffixes` and `SearchGraphitePaths` (used in [/graphite/metrics/find](https://docs.victoriametrics.com/victoriametrics/url-examples/#graphitemetricsfind))
+
+For each query type the same dataset is used. This dataset is ingested once
+before a given benchmark and then queried multiple times within the benchmark
+loop.
+
+`pt-index` is a big change and it may pontetially affect the database
+performance of the queries depending on
+
+- How many unique time series to retrieve from the index
+- How big is the query time range
+- How index data s split bewteen legacy and pt-index
+
+The benchmark dataset is configurable with this params, i.e.
+a given benchmark can specify:
+
+- The number of unique timeseries: `100`, `1k`, `10k`, `100k`, `1M`
+- The time range in which data will be contained: `1h`, `1d`, `1w`, `1m`, `2m`, `6m`
+- How index data is split between legacy and pt-index
+
+For example, the following benchmark measures the performance of retrieving `100k`
+metrics names within `1h` time range split across legacy curr indexDB and the
+partition indexDB:
+
+```
+BenchmarkSearch/MetricNames/CurrPt/VariousSeries/1000000
+```
+
+And the following one measures the performance of retrieving `100k` metrics
+names within `1m` time range that are all in pt-index:
+
+```
+BenchmarkSearch/MetricNames/PtOnly/VariousTimeRange/1m
+```
+
+To run these benchmarks for all query types.
+
+```
+BenchmarkSearch/.*/CurrPt/VariousSeries/1000000
+BenchmarkSearch/.*/PtOnly/VariousTimeRange/1m
+```
+
+To run this benchmark for all query types for all numbers of unique timeseries
+and all time ranges:
+
+```
+BenchmarkSearch/.*/CurrPt/VariousMetrics/.*
+BenchmarkSearch/.*/PtOnly/VariousTimeRange/.*
+```
+
+There can be many combinations and in order to make sense of these results,
+let's focus on the use cases that we will be facing shortly after releasing the
+pt-index.
+
+1. The majority of the users are the existing deployments will already have
+   index data at least legacy curr indexDB. The perfomance found in the existing
+   deployments is the baseline that both new that and existing deployments that
+   upgraded to pt-index should be compared with.
+2. The upgraded existing deployments will still be using the legacy index
+   shortly after upgrade since the pt-index has just started to be populated.
+   So it is important to check how queries against legacy curr indexDB perform
+   before and right after the upgrade.
+3. The upgraded existing deployments will continue to use legacy index for until
+   it gets rotated out. So it is important to check how queries against pt-index
+   and legacy curr indexDB perform when the half of the entries are in pt-index
+   and another half is in legacy index.
+4. Some deployments will start from pt-index right away. Also, the upgraded
+   existing deployments, will look like "pure" pt-index deployments when the
+   legacy index is rotated out. Even if they are not dealing with entries split
+   between legacy and pt index, it is important to check how "pure" pt-index
+   deployments perform compared to legacy index.
+
+For each of aforementioned use cases we will run benchmarks that measures the
+performance of queries for different numbers of unique timeseries and different
+time ranges. Then, we will compare them.
+
+The benchmarks for the first use case will be run against `v1.127.0`:
+
+```
+BenchmarkSearch/.*/CurrOnly/(VariousMetrics|VariousTimeRange)/.*
+```
+
+The benchmarks for the rest of use cases will be run against the pt-index:
+
+```
+BenchmarkSearch/.*/CurrOnly/(VariousMetrics|VariousTimeRange)/.*
+BenchmarkSearch/.*/CurrPt/(VariousMetrics|VariousTimeRange)/.*
+BenchmarkSearch/.*/PtOnly/(VariousMetrics|VariousTimeRange)/.*
+```
+
+The following script will switch to the necessary tags and branches, run the
+benchmarks, and write the comparison results to a file.
+
+```shell
+../perf/bench-query
+```
+
+The results of the latest run on a `e2-standard-8` GCP instance can be found [here](../perf/v1.127.0-issue-7599-CurrOnly-PtOnly-CurrPt.log)
