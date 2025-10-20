@@ -7,12 +7,12 @@
 We will perform three types of benchmarks:
 
 1. [Data Ingestion](#data-ingestion): these benchmarks examine the performance
-   of data ingestion in context use cases that we believe will be applicable to
-   most of the users.
+   of data ingestion in context of the use cases that we believe will be
+   applicable to most of the users.
 2. [Index Queries](#index-queries): these benchmarks examine the performace of
    the retrieval of various index data, such as metric names, label names, and
    label values. Basic data retrieval is also covered by these benchmarks.
-   Again, we will cover the most anticipated use cases only.
+   Again, we will cover the most common use cases only.
 3. [Data Queries](#data-queries): examines the performance of some selected
    Prom/MetricsQL queries. It is unlikely that these queries are the most used
    ones, but they are designed to examine different constructs of the query
@@ -21,7 +21,7 @@ We will perform three types of benchmarks:
 ### Versions under Test
 
 All benchmarks will be comparing `OSS vmsingle v1.127.0` and
-`OSS vmsingle w/ pt-index` (which is basically the current master + pt-index
+`OSS vmsingle w/ pt-index` (which is basically the current `master` + `pt-index`
 changes).
 
 ### Testing Environment
@@ -67,7 +67,7 @@ We will consider the following use cases:
 
 For each use case we will use the same data:
 
-- Time range: the whole previous day
+- The time range is the whole previous day
 - There are 100K instances. Each instance emits 10 unique metrics (TSBS
   [cpu-only](https://github.com/timescale/tsbs?tab=readme-ov-file#dev-ops) use
   case). Therefore, 100K instances emit 1M unique metrics.
@@ -94,11 +94,11 @@ Load summary:
 - `v1.127.0`: loaded 1080000000 metrics in 754.187sec with 4 workers (mean rate 1432005.31 metrics/sec)
 - `pt-index`: loaded 1080000000 metrics in 762.711sec with 4 workers (mean rate 1416002.27 metrics/sec)
 
-I.e. pt-index is ~1% slower.
+I.e. pt-index is `~1%` slower.
 
 Below is the graph of the sample load rate over time:
 
-![samples/sec](../perf/data-indestion-empty-v1.127.0-pt-index.png)
+![samples/sec](../perf/data-ingestion-empty-v1.127.0-pt-index.png)
 
 Comparison of some important metrics
 
@@ -114,10 +114,11 @@ process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
 
 Raw load logs:
 
-- [v1.127.0](../perf/data-indestion-empty-v1.127.0.png)
-- [pt-index](../perf/data-indestion-empty-pt-index.png)
+- [v1.127.0](../perf/data-ingestion-empty-v1.127.0.png)
+- [pt-index](../perf/data-ingestion-empty-pt-index.png)
 
-## How to run
+<details>
+<summary>How to Run</summary>
 
 In terminal #2, start `v1.127.0`:
 
@@ -131,7 +132,7 @@ rm -Rf ../data/*
 In terminal #1, run TSBS data load:
 
 ```shell
-make tsbs-load-data | tee data-indestion-empty-v1.127.0.log
+make tsbs-load-data | tee data-ingestion-empty-v1.127.0.log
 ```
 
 Stop `v1.127.0`.
@@ -148,7 +149,7 @@ rm -Rf ../data/*
 In terminal #1, run TSBS data load:
 
 ```shell
-make tsbs-load-data | tee data-indestion-empty-pt-index.log
+make tsbs-load-data | tee data-ingestion-empty-pt-index.log
 ```
 
 Stop `pt-index`.
@@ -160,6 +161,8 @@ make tsbs-plot-load \
   TSBS_LOAD_RESULT_CSV_FILE=data-ingestion-empty-v1.127.0.log \
   TSBS_LOAD_RESULT_CSV_FILE_COMPARE=data-ingestion-empty-pt-index.log
 ```
+
+</details>
 
 ### Non-Empty with Restart
 
@@ -174,7 +177,7 @@ I.e. pt-index is ~1% slower.
 
 Below is the graph of the sample load rate over time:
 
-![v1.127.0-v1.127.0 samples/sec](../perf/data-indestion-non-empty-after-restart-v1.127.0-pt-index.png)
+![v1.127.0-v1.127.0 samples/sec](../perf/data-ingestion-non-empty-after-restart-v1.127.0-pt-index.png)
 
 Comparison of some important metrics
 
@@ -190,8 +193,8 @@ process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
 
 Raw load logs:
 
-- [v1.127.0](../perf/data-indestion-non-empty-after-restart-v1.127.0.png)
-- [pt-index](../perf/data-indestion-non-empty-after-restart-pt-index.png)
+- [v1.127.0](../perf/data-ingestion-non-empty-after-restart-v1.127.0.png)
+- [pt-index](../perf/data-ingestion-non-empty-after-restart-pt-index.png)
 
 ## How to run
 
@@ -210,7 +213,7 @@ make clean victoria-metrics
 In terminal #1, run TSBS data load:
 
 ```shell
-make tsbs-load-data | tee data-indestion-non-empty-after-restart-v1.127.0.log
+make tsbs-load-data | tee data-ingestion-non-empty-after-restart-v1.127.0.log
 ```
 
 Stop `v1.127.0`.
@@ -226,7 +229,7 @@ make clean victoria-metrics
 In terminal #1, run TSBS data load:
 
 ```shell
-make tsbs-load-data | tee data-indestion-non-empty-after-restart-pt-index.log
+make tsbs-load-data | tee data-ingestion-non-empty-after-restart-pt-index.log
 ```
 
 Stop `pt-index`.
