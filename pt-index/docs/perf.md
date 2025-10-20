@@ -98,7 +98,7 @@ I.e. pt-index is `~1%` slower.
 
 Below is the graph of the sample load rate over time:
 
-![samples/sec](../perf/data-ingestion-empty-v1.127.0-pt-index.png)
+![samples/sec](../perf/data-ingestion-empty-v1.127.0-pt-index.svg)
 
 Comparison of some important metrics
 
@@ -112,14 +112,10 @@ process_resident_memory_peak_bytes | 3479142400  | 3265609728  | 6.13
 process_io_read_bytes_total        | 43229424002 | 43078044931 | 0.35
 process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
 
-
-<details>
-<summary>DETAILS</summary>
-
 Raw load logs:
 
-- [v1.127.0](../perf/data-ingestion-empty-v1.127.0.png)
-- [pt-index](../perf/data-ingestion-empty-pt-index.png)
+- [v1.127.0](../perf/data-ingestion-empty-v1.127.0.log)
+- [pt-index](../perf/data-ingestion-empty-pt-index.log)
 
 #### How to Run
 
@@ -180,7 +176,7 @@ I.e. pt-index is ~1% slower.
 
 Below is the graph of the sample load rate over time:
 
-![v1.127.0-v1.127.0 samples/sec](../perf/data-ingestion-non-empty-after-restart-v1.127.0-pt-index.png)
+![samples/sec](../perf/data-ingestion-non-empty-after-restart-v1.127.0-pt-index.svg)
 
 Comparison of some important metrics
 
@@ -196,10 +192,10 @@ process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
 
 Raw load logs:
 
-- [v1.127.0](../perf/data-ingestion-non-empty-after-restart-v1.127.0.png)
-- [pt-index](../perf/data-ingestion-non-empty-after-restart-pt-index.png)
+- [v1.127.0](../perf/data-ingestion-non-empty-after-restart-v1.127.0.log)
+- [pt-index](../perf/data-ingestion-non-empty-after-restart-pt-index.log)
 
-## How to run
+#### How to run
 
 This benchmark depends on data that has been ingested in [previous](#empty) one.
 
@@ -244,10 +240,6 @@ make tsbs-plot-load \
   TSBS_LOAD_RESULT_CSV_FILE=data-ingestion-non-empty-after-restart-v1.127.0.log \
   TSBS_LOAD_RESULT_CSV_FILE_COMPARE=data-ingestion-non-empty-after-restart-pt-index.log
 ```
-
-
-#### How to Run
-
 
 ## Index Queries
 
