@@ -98,7 +98,7 @@ I.e. pt-index is `~1%` slower.
 
 Below is the graph of the sample load rate over time:
 
-![samples/sec](../perf/data-ingestion-empty-v1.127.0-pt-index.svg)
+![samples/sec](../perf/data-ingestion-empty-v1.127.0-pt-index.png)
 
 Comparison of some important metrics
 
@@ -176,7 +176,7 @@ I.e. pt-index is ~1% slower.
 
 Below is the graph of the sample load rate over time:
 
-![samples/sec](../perf/data-ingestion-non-empty-after-restart-v1.127.0-pt-index.svg)
+![samples/sec](../perf/data-ingestion-non-empty-after-restart-v1.127.0-pt-index.png)
 
 Comparison of some important metrics
 
