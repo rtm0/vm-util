@@ -112,13 +112,16 @@ process_resident_memory_peak_bytes | 3479142400  | 3265609728  | 6.13
 process_io_read_bytes_total        | 43229424002 | 43078044931 | 0.35
 process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
 
+
+<details>
+<summary>DETAILS</summary>
+
 Raw load logs:
 
 - [v1.127.0](../perf/data-ingestion-empty-v1.127.0.png)
 - [pt-index](../perf/data-ingestion-empty-pt-index.png)
 
-<details>
-<summary>How to Run</summary>
+#### How to Run
 
 In terminal #2, start `v1.127.0`:
 
