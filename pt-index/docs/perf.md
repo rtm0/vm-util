@@ -91,26 +91,26 @@ Overall the `pt-index` performance is very close to `v1.127.0`.
 
 Load summary:
 
-- `v1.127.0`: loaded 1080000000 metrics in 754.187sec with 4 workers (mean rate 1432005.31 metrics/sec)
-- `pt-index`: loaded 1080000000 metrics in 762.711sec with 4 workers (mean rate 1416002.27 metrics/sec)
+- `v1.127.0`: loaded 1080000000 metrics in 610.252sec with 4 workers (mean rate 1769761.57 metrics/sec)
+- `pt-index`: loaded 1080000000 metrics in 605.958sec with 4 workers (mean rate 1782301.27 metrics/sec)
 
-I.e. pt-index is `~1%` slower.
+I.e. pt-index is `~1%` faster.
 
 Below is the graph of the sample load rate over time:
 
 ![samples/sec](../perf/data-ingestion-empty-v1.127.0-pt-index.png)
 
-Comparison of some important metrics
+Comparison of some important metrics:
 
 Metric                             | v1.127.0    | pt-index    | diff %
 ---------------------------------- | ----------- | ----------- | ------
-process_cpu_seconds_system_total   | 305.48      | 299.73      | 1.88
-process_cpu_seconds_total          | 5381.76     | 5427.92     | -0.85
-process_cpu_seconds_user_total     | 5076.28     | 5128.19     | -1.02
-process_resident_memory_bytes      | 1531187200  | 1343549440  | 12.25
-process_resident_memory_peak_bytes | 3479142400  | 3265609728  | 6.13
-process_io_read_bytes_total        | 43229424002 | 43078044931 | 0.35
-process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
+process_cpu_seconds_system_total   | 218.84      | 193.63      | -11.52
+process_cpu_seconds_total          | 3722.71     | 3663.73     | 1.58
+process_cpu_seconds_user_total     | 3503.87     | 3470.1      | -1.02
+process_resident_memory_bytes      | 1579757568  | 1634140160  | 3.44
+process_resident_memory_peak_bytes | 2818256896  | 2770223104  | -1.7
+process_io_read_bytes_total        | 42186355770 | 42023530052 | -0.38
+process_io_written_bytes_total     | 5540444607  | 5449190023  | 1.65
 
 Raw load logs:
 
@@ -165,14 +165,15 @@ make tsbs-plot-load \
 
 ### Non-Empty with Restart
 
-Overall the `pt-index` performance is very close to `v1.127.0`.
+Overall the `pt-index` performance can be noticeably slower than `v1.127.0`
+right after the upgrade.
 
 Load summary:
 
-- `v1.127.0`: TBD
-- `pt-index`: TBD
+- `v1.127.0`: loaded 1080000000 metrics in 584.077sec with 4 workers (mean rate 1849071.37 metrics/sec)
+- `pt-index`: loaded 1080000000 metrics in 651.952sec with 4 workers (mean rate 1656564.17 metrics/sec)
 
-I.e. pt-index is ~1% slower.
+I.e. pt-index is ~11.62% slower.
 
 Below is the graph of the sample load rate over time:
 
@@ -182,13 +183,13 @@ Comparison of some important metrics
 
 Metric                             | v1.127.0    | pt-index    | diff %
 ---------------------------------- | ----------- | ----------- | ------
-process_cpu_seconds_system_total   | 305.48      | 299.73      | 1.88
-process_cpu_seconds_total          | 5381.76     | 5427.92     | -0.85
-process_cpu_seconds_user_total     | 5076.28     | 5128.19     | -1.02
-process_resident_memory_bytes      | 1531187200  | 1343549440  | 12.25
-process_resident_memory_peak_bytes | 3479142400  | 3265609728  | 6.13
-process_io_read_bytes_total        | 43229424002 | 43078044931 | 0.35
-process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
+process_cpu_seconds_system_total   | 176.44      | 246.88      | 39.92
+process_cpu_seconds_total          | 3558.51     | 3977.55     | 11.77
+process_cpu_seconds_user_total     | 3382.07     | 3730.67     | 10.31
+process_resident_memory_bytes      | 1738272768  | 1833246720  | 5.46
+process_resident_memory_peak_bytes | 2207891456  | 3034320896  | 37.43
+process_io_read_bytes_total        | 42104240428 | 42609369274 | 1.2
+process_io_written_bytes_total     | 5417114825  | 5852539851  | 8.04
 
 Raw load logs:
 
