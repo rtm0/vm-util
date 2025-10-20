@@ -1,8 +1,30 @@
 # Partition Index Performace Testing
 
-All benchmarks will be comparing `OSS vmsingle v1.126.0` and
+## Preconditions
+
+### Types of Benchmarks
+
+We will perform three types of benchmarks:
+
+1. [Data Ingestion](#data-ingestion): these benchmarks examine the performance
+   of data ingestion in context use cases that we believe will be applicable to
+   most of the users.
+2. [Index Queries](#index-queries): these benchmarks examine the performace of
+   the retrieval of various index data, such as metric names, label names, and
+   label values. Basic data retrieval is also covered by these benchmarks.
+   Again, we will cover the most anticipated use cases only.
+3. [Data Queries](#data-queries): examines the performance of some selected
+   Prom/MetricsQL queries. It is unlikely that these queries are the most used
+   ones, but they are designed to examine different constructs of the query
+   language to see how they affect performance of data retrieval.
+
+### Versions under Test
+
+All benchmarks will be comparing `OSS vmsingle v1.127.0` and
 `OSS vmsingle w/ pt-index` (which is basically the current master + pt-index
 changes).
+
+### Testing Environment
 
 All benchmarks are run on
 [e2-standard-8](https://cloud.google.com/compute/docs/general-purpose-machines#e2_machine_types)
@@ -26,12 +48,24 @@ GCP instance because:
 	not comparing the performance of a given version on `e2` and `n2` which will
 	obviously be different.
 
-# TSBS: Empty
+## Data Ingestion
 
-Run [TSBS](https://github.com/timescale/tsbs) against an empty database without
-and with pt index.
+To test data ingestion we will be using [TSBS](https://github.com/timescale/tsbs).
 
-## Data
+We will consider the following use cases:
+
+1. [Empty](#empty): Load the data into an empty database. This benchmark
+   compares the performance of new `pt-index` deployments with `v1.127.0`
+   deployments that haven't been upgraded to `pt-index` yet. This benchmark
+   should answer the question whether the `pt-index` is better or worse than
+   previous versions in context of data ingestion.
+2. [Non-empty with Restart](#non-empty-with-restart): Load the data into a
+   non-empty database after the database restart. This benchmark symulates the
+   upgrade of existing deployments from `v1.127.0` to `pt-index`. It should
+   answer the question if there will be any performance degradation shortly
+   after upgrading the deployment to `pt-index`.
+
+For each use case we will use the same data:
 
 - Time range: the whole previous day
 - There are 100K instances. Each instance emits 10 unique metrics (TSBS
@@ -41,83 +75,147 @@ and with pt index.
   80s intervals within 24 hours
 - And total number of samples: 1M metrics × ~1K intervals = ~1B
 
-- 4 concurrent workers ingest those 1B samples
-- querying happens after the ingestion is completed
-- 4 concurrent workers send 1k queries of a given type.
-- There are 10 [query types](https://github.com/timescale/tsbs?tab=readme-ov-file#devops--cpu-only):
+The data is generated only once before all tests:
 
-  - `single-groupby-1-1-1`
-  - `single-groupby-1-1-12`
-  - `single-groupby-1-8-1`
-  - `single-groupby-5-1-1`
-  - `single-groupby-5-1-12`
-  - `single-groupby-5-8-1`
-  - `cpu-max-all-1`
-  - `cpu-max-all-8`
-  - `double-groupby-1`
+```shell
+make tsbs-build tsbs-generate-data
+```
 
-  The following query types are omitted due to being to heavy:
-  `double-groupby-5`, `double-groupby-all`.
+During each test, 4 concurrent workers ingest the data.
 
-## Results
+Below are the benchmark results and the description how each benchmark for done.
+
+### Empty
+
+Overall the `pt-index` performance is very close to `v1.127.0`.
 
 Load summary:
 
-- v1.126.0: loaded 1080000000 samples in 629.088sec with 4 workers (mean rate 1716771.07 samples/sec)
-- pt-index: loaded 1080000000 samples in 687.479sec with 4 workers (mean rate 1570957.15 samples/sec)
+- `v1.127.0`: loaded 1080000000 metrics in 754.187sec with 4 workers (mean rate 1432005.31 metrics/sec)
+- `pt-index`: loaded 1080000000 metrics in 762.711sec with 4 workers (mean rate 1416002.27 metrics/sec)
 
-I.e. pt-index was 9% slower.
+I.e. pt-index is ~1% slower.
 
-Below is the graph of the samlpe load rate over time:
+Below is the graph of the sample load rate over time:
 
-![samples/sec](../perf/tsbs-emply-vmsingle-v1.126.0-vs-pt-index-load.png)
+![samples/sec](../perf/data-indestion-empty-v1.127.0-pt-index.png)
 
 Comparison of some important metrics
 
-Metric                             | v1.126.0    | pt-index    | diff %
+Metric                             | v1.127.0    | pt-index    | diff %
 ---------------------------------- | ----------- | ----------- | ------
-process_cpu_seconds_system_total   | 217.93      | 271.81      | +25
-process_cpu_seconds_total          | 3901.61     | 4197.49     | +8
-process_cpu_seconds_user_total     | 3683.68     | 3925.68     | +7
-process_resident_memory_bytes      | 1440911360  | 1246068736  | -12
-process_resident_memory_peak_bytes | 2825252864  | 2843361280  | +1
-process_io_read_bytes_total        | 42190959504 | 42581097874 | +1
-process_io_written_bytes_total     | 5635185803  | 5920760702  | +5
+process_cpu_seconds_system_total   | 305.48      | 299.73      | 1.88
+process_cpu_seconds_total          | 5381.76     | 5427.92     | -0.85
+process_cpu_seconds_user_total     | 5076.28     | 5128.19     | -1.02
+process_resident_memory_bytes      | 1531187200  | 1343549440  | 12.25
+process_resident_memory_peak_bytes | 3479142400  | 3265609728  | 6.13
+process_io_read_bytes_total        | 43229424002 | 43078044931 | 0.35
+process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
 
-Query summary:
+Raw load logs:
 
-Query Type            | v1.126.0 queries/s | pt-index queries/s | diff %
---------------------- | ------------------ | ------------------ | ------
-single-groupby-1-1-1  | 2296.15            | 3271.67            | +42
-single-groupby-1-1-12 | 2436.61            | 3040.75            | +25
-single-groupby-1-8-1  | 2007.92            | 2082.20            | +4
-single-groupby-5-1-1  | 1589.53            | 1924.29            | +21
-single-groupby-5-1-12 |  984.02            | 1256.50            | +28
-single-groupby-5-8-1  | 1174.01            | 1152.70            | -2
-cpu-max-all-1         |  815.43            | 1493.25            | +83
-cpu-max-all-8         |  617.68            |  687.59            | +11
-double-groupby-1      |    1.38            |    1.34            | -3
-
+- [v1.127.0](../perf/data-indestion-empty-v1.127.0.png)
+- [pt-index](../perf/data-indestion-empty-pt-index.png)
 
 ## How to run
 
-Start `OSS vmsingle v1.126.0`:
+In terminal #2, start `v1.127.0`:
 
 ```shell
-git checkout v1.126.0
+git checkout v1.127.0
+make clean victoria-metrics
+rm -Rf ../data/*
+./bin/victoria-metrics -storageDataPath=../data
+```
+
+In terminal #1, run TSBS data load:
+
+```shell
+make tsbs-load-data | tee data-indestion-empty-v1.127.0.log
+```
+
+Stop `v1.127.0`.
+
+In terminal #3, start `pt-index`:
+
+```shell
+git switch issue-7599
+make clean victoria-metrics
+rm -Rf ../data/*
+./bin/victoria-metrics -storageDataPath=../data
+```
+
+In terminal #1, run TSBS data load:
+
+```shell
+make tsbs-load-data | tee data-indestion-empty-pt-index.log
+```
+
+Stop `pt-index`.
+
+In terminal #1, plot load graph:
+
+```shell
+make tsbs-plot-load \
+  TSBS_LOAD_RESULT_CSV_FILE=data-ingestion-empty-v1.127.0.log \
+  TSBS_LOAD_RESULT_CSV_FILE_COMPARE=data-ingestion-empty-pt-index.log
+```
+
+### Non-Empty with Restart
+
+Overall the `pt-index` performance is very close to `v1.127.0`.
+
+Load summary:
+
+- `v1.127.0`: TBD
+- `pt-index`: TBD
+
+I.e. pt-index is ~1% slower.
+
+Below is the graph of the sample load rate over time:
+
+![v1.127.0-v1.127.0 samples/sec](../perf/data-indestion-non-empty-after-restart-v1.127.0-pt-index.png)
+
+Comparison of some important metrics
+
+Metric                             | v1.127.0    | pt-index    | diff %
+---------------------------------- | ----------- | ----------- | ------
+process_cpu_seconds_system_total   | 305.48      | 299.73      | 1.88
+process_cpu_seconds_total          | 5381.76     | 5427.92     | -0.85
+process_cpu_seconds_user_total     | 5076.28     | 5128.19     | -1.02
+process_resident_memory_bytes      | 1531187200  | 1343549440  | 12.25
+process_resident_memory_peak_bytes | 3479142400  | 3265609728  | 6.13
+process_io_read_bytes_total        | 43229424002 | 43078044931 | 0.35
+process_io_written_bytes_total     | 6648707564  | 6592771686  | 0.84
+
+Raw load logs:
+
+- [v1.127.0](../perf/data-indestion-non-empty-after-restart-v1.127.0.png)
+- [pt-index](../perf/data-indestion-non-empty-after-restart-pt-index.png)
+
+## How to run
+
+This benchmark depends on data that has been ingested in [previous](#empty) one.
+
+Copy the `v1.127.0` data dir to `pt-index`.
+
+In terminal #2, start `v1.127.0`:
+
+```shell
+git checkout v1.127.0
 make clean victoria-metrics
 ./bin/victoria-metrics -storageDataPath=../data
 ```
 
-In a separate terminal and git client, run TSBS:
+In terminal #1, run TSBS data load:
 
 ```shell
-make tsbs | tee ~/tsbs-empty-vmsingle-v1.126.0.log
+make tsbs-load-data | tee data-indestion-non-empty-after-restart-v1.127.0.log
 ```
 
-Stop vmsingle.
+Stop `v1.127.0`.
 
-In a separate terminal, start `OSS vmsingle w/ pt-index`:
+In terminal #3, start `pt-index`:
 
 ```shell
 git switch issue-7599
@@ -125,28 +223,27 @@ make clean victoria-metrics
 ./bin/victoria-metrics -storageDataPath=../data
 ```
 
-In TSBS terminal, run TSBS:
+In terminal #1, run TSBS data load:
 
 ```shell
-make tsbs | tee ~/tsbs-empty-vmsingle-pt-index.log
+make tsbs-load-data | tee data-indestion-non-empty-after-restart-pt-index.log
 ```
 
-Copy load results into a csv file:
+Stop `pt-index`.
 
-```
-~/tsbs-empty-vmsingle-v1.126.0.log -> ~/tsbs-empty-vmsingle-pt-v1.126.0.csv
-~/tsbs-empty-vmsingle-pt-index.log -> ~/tsbs-empty-vmsingle-pt-index-load.csv
-```
-
-In TSBS terminal, plot load graph:
+In terminal #1, plot the graph:
 
 ```shell
 make tsbs-plot-load \
-  TSBS_LOAD_RESULT_CSV_FILE=~/tsbs-empty-vmsingle-v1.126.0-load.csv \
-  TSBS_LOAD_RESULT_CSV_FILE_COMPARE=~/tsbs-empty-vmsingle-pt-index-load.csv
+  TSBS_LOAD_RESULT_CSV_FILE=data-ingestion-non-empty-after-restart-v1.127.0.log \
+  TSBS_LOAD_RESULT_CSV_FILE_COMPARE=data-ingestion-non-empty-after-restart-pt-index.log
 ```
 
-## Index and Data Queries
+
+#### How to Run
+
+
+## Index Queries
 
 To test the performance of queries we use Go benchmarks. Specifically,
 we will be using `BenchmarkSearch` located in
@@ -255,3 +352,37 @@ benchmarks, and write the comparison results to a file.
 ```
 
 The results of the latest run on a `e2-standard-8` GCP instance can be found [here](../perf/v1.127.0-issue-7599-CurrOnly-PtOnly-CurrPt.log)
+
+## Data Queries
+
+- 4 concurrent workers ingest those 1B samples
+- querying happens after the ingestion is completed
+- 4 concurrent workers send 1k queries of a given type.
+- There are 10 [query types](https://github.com/timescale/tsbs?tab=readme-ov-file#devops--cpu-only):
+
+  - `single-groupby-1-1-1`
+  - `single-groupby-1-1-12`
+  - `single-groupby-1-8-1`
+  - `single-groupby-5-1-1`
+  - `single-groupby-5-1-12`
+  - `single-groupby-5-8-1`
+  - `cpu-max-all-1`
+  - `cpu-max-all-8`
+  - `double-groupby-1`
+
+  The following query types are omitted due to being too heavy:
+  `double-groupby-5`, `double-groupby-all`.
+
+Query summary:
+
+Query Type            | v1.127.0 queries/s | pt-index queries/s | diff %
+--------------------- | ------------------ | ------------------ | ------
+single-groupby-1-1-1  | 2296.15            | 3271.67            | +42
+single-groupby-1-1-12 | 2436.61            | 3040.75            | +25
+single-groupby-1-8-1  | 2007.92            | 2082.20            | +4
+single-groupby-5-1-1  | 1589.53            | 1924.29            | +21
+single-groupby-5-1-12 |  984.02            | 1256.50            | +28
+single-groupby-5-8-1  | 1174.01            | 1152.70            | -2
+cpu-max-all-1         |  815.43            | 1493.25            | +83
+cpu-max-all-8         |  617.68            |  687.59            | +11
+double-groupby-1      |    1.38            |    1.34            | -3

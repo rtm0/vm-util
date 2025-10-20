@@ -12,18 +12,31 @@ START=${DATE}T00:01:00
 END=${DATE}T23:59:59
 VERSION=$2
 
-curl ${BASEURL}/api/v1/series -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
-  | jq . \
-  | tee ${DATE}-metric-names-${VERSION}.json
+METRIC_NAMES_JSON=${DATE}-metric-names-${VERSION}.json
+LABEL_NAMES_JSON=${DATE}-label-names-${VERSION}.json
+LABEL_VALUES_JSON=${DATE}-label-values-${VERSION}.json
+DATA_JSON=${DATE}-data-${VERSION}.json
 
-curl ${BASEURL}/api/v1/labels -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
+echo "Retrieving metric names into ${METRIC_NAMES_JSON}"
+curl -s ${BASEURL}/api/v1/series -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
+	| jq '.data |= sort_by(.instance, .revision)' > ${METRIC_NAMES_JSON}
+echo "Metric name count: $(jq '.data | length' ${METRIC_NAMES_JSON})"
+echo
+echo
+echo "Retrieving metric names into ${LABEL_NAMES_JSON}"
+curl -s ${BASEURL}/api/v1/labels -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
   | jq . \
-  | tee ${DATE}-label-names-${VERSION}.json
+  | tee ${LABEL_NAMES_JSON}
+echo
+echo
+echo "Retrieving label values into ${LABEL_VALUES_JSON}"
+curl -s ${BASEURL}/api/v1/label/node/values -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
+  | jq . \
+  | tee ${LABEL_VALUES_JSON}
+echo
+echo
+echo "Retrieving data into ${DATA_JSON}"
+curl -s ${BASEURL}/api/v1/query_range -d 'query=count(up)' -d "start=${START}" -d "end=${END}" -d "step=1h" \
+  | jq . \
+  | tee ${DATA_JSON}
 
-curl ${BASEURL}/api/v1/label/node/values -d 'match[]=up' -d "start=${START}" -d "end=${END}" \
-  | jq . \
-  | tee ${DATE}-label-values-${VERSION}.json
-
-curl ${BASEURL}/api/v1/query_range -d 'query=count(up)' -d "start=${START}" -d "end=${END}" -d "step=1h" \
-  | jq . \
-  | tee ${DATE}-data-${VERSION}.json
