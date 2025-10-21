@@ -67,8 +67,9 @@ deployments that switched to pt-index will have partition indexDBs only for
 those partitions that they have received samples for after the upgrade. In the
 example above, the deployment has 10 partitions, but only the last one has
 a corresponding indexDB because previous partitions did not receive any samples
-after the upgrade. The rest of the index is till stored under
-`storageDataPath/data/indexdb` which we from now on call `legacy indexDB(s)`.
+after the upgrade. The rest of the index is till stored in
+`storageDataPath/indexdb` which we will be calling `legacy indexDB(s)` from now
+on.
 
 There is no prefill or background migration from legacy to partition indexDBs.
 But vmstorage will create missing records in pt-index as new samples are
@@ -83,7 +84,7 @@ at all.
 
 ### Legacy indexDBs become read-only (almost)
 
-After the upgrade of an existing deployment, legacy indexDBs will not deleted
+After the upgrade of an existing deployment, legacy indexDBs will not be deleted
 but they will stop receving new entries right away and will be used for querying
 only.
 
@@ -94,7 +95,7 @@ created, most of the index data will be coming from pt-index. See
 [benchmark results](perf.md) for different cases.
 
 Legacy indexDBs will not become fully read-only though. It is possible that new
-entries will be added to to them when a timeseries is deleted. For this reason
+entries will be added to them when a timeseries is deleted. For this reason
 background merges in legacy indexDBs are still possible.
 
 A legacy indexDB gets deleted when it becomes fully outside the retention
