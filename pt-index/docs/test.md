@@ -102,10 +102,10 @@ Downgrade the deployment to `v1.127.0`. Run index and data queries for
 ```
 
 Check `2025-10-20 v1.127.0` results. Index query results should be empty. This
-shows that can read per-day records from the pt-index. Data query results,
-however, may contain partial or even full result. This shows that the data about
-metric names is first retrieved from `metricNameCache` and only if the name is
-not found there does vmstorage perform the search in legacy index.
+shows that `v1.127.0` can't read per-day records from the pt-index. Data query
+results, however, may contain partial or even full result. This shows that the
+data about metric names is first retrieved from `metricNameCache` and only if
+the name is not found there does vmstorage perform the search in legacy index.
 
 Check `2025-10-19 v1.127.0` results. Index query results may be partial or even
 full. This is because `2025-10-19` per-day records will be split between legacy
