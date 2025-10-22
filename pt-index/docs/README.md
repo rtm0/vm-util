@@ -8,7 +8,7 @@ https://github.com/VictoriaMetrics/VictoriaMetrics/issues/7599
 
 Only new deployments, however, will be able to benefit from this change from the
 start. The existing deployments will start seeing benefits only after the legacy
-index becomes outside the retention period and deleted.
+index becomes outside the retention period and gets deleted.
 
 There is no way to opt out of this feature but neither any upgrade preparations
 are required from the end users. `Just upgrading the version` should work since
@@ -74,9 +74,9 @@ on.
 There is no prefill or background migration from legacy to partition indexDBs.
 But vmstorage will create missing records in pt-index as new samples are
 ingested, both for existing timeseries and new ones. For existing timeseries,
-the metricIDs will be reused if they are found in `tsidCache`.
-
-TODO(@rtm0): Will it cause ingestion slowdown?
+the metricIDs will be reused if they are found in `tsidCache`. This may
+initially slow down the ingestion (see the
+[Data Ingestion](perf.md#data-ingestion) benchmark results).
 
 This is true only for existing deployments that switched to pt-index. New
 deployments that started to use pt-index right away won't have legacy indexDBs
@@ -92,11 +92,13 @@ During data retrieval, legacy and partition indexDBs will be queried
 concurrently. At first, most of the entries will be found in legacy indexDBs,
 but over time, as the partition index is filled in and new partitions are
 created, most of the index data will be coming from pt-index. See
-[benchmark results](perf.md) for different cases.
+[Index Queries](perf.md#index-queries) and [Data Queries](perf.md#data-queries)
+benchmark results for different use cases.
 
 Legacy indexDBs will not become fully read-only though. It is possible that new
-entries will be added to them when a timeseries is deleted. For this reason
-background merges in legacy indexDBs are still possible.
+entries will be added to them when a timeseries is
+[deleted](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1admintsdbdelete_series).
+For this reason, background merges in legacy indexDBs are still possible.
 
 A legacy indexDB gets deleted when it becomes fully outside the retention
 period. New legacy indexDBs are not created. Once the last legacy indexDB is
