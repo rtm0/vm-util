@@ -21,7 +21,8 @@ We will perform three types of benchmarks:
 ### Versions under Test
 
 All benchmarks will be comparing `OSS vmsingle v1.127.0` and
-`OSS vmsingle w/ pt-index` (which is basically the current `master` + `pt-index`
+`OSS vmsingle w/ pt-index` (which is basically the current `master` with
+[pt-index](https://github.com/VictoriaMetrics/VictoriaMetrics/pull/8134)
 changes).
 
 ### Testing Environment
@@ -30,7 +31,7 @@ All benchmarks are run on
 [e2-standard-8](https://cloud.google.com/compute/docs/general-purpose-machines#e2_machine_types)
 GCP instance because:
 
-- Running on a benchmark personal laptop is not reliable because it typically
+- Running a benchmark on a personal laptop is not reliable because it typically
   has bunch of other stuff running and it will be hard for others to reproduce.
 - This is the default type of node in GCP GKE and therefore will be chosen more
   often.
@@ -75,19 +76,20 @@ For each use case we will use the same data:
   80s intervals within 24 hours
 - And total number of samples: 1M metrics × ~1K intervals = ~1B
 
-The data is generated only once before all tests:
+The data is generated only once before all ingestion benchmarks:
 
 ```shell
 make tsbs-build tsbs-generate-data
 ```
 
-During each test, 4 concurrent workers ingest the data.
+During each test, 4 concurrent workers will be ingesting the data.
 
-Below are the benchmark results and the description how each benchmark for done.
+Below are the benchmark results and the description to to perform each
+benchmark.
 
 ### Empty
 
-Overall the `pt-index` performance is very close to `v1.127.0`.
+Overall, the `pt-index` performance is very close to `v1.127.0`.
 
 Load summary:
 
@@ -102,15 +104,15 @@ Below is the graph of the sample load rate over time:
 
 Comparison of some important metrics:
 
-Metric                             | v1.127.0    | pt-index    | diff %
----------------------------------- | ----------- | ----------- | ------
-process_cpu_seconds_system_total   | 218.84      | 193.63      | -11.52
-process_cpu_seconds_total          | 3722.71     | 3663.73     | 1.58
-process_cpu_seconds_user_total     | 3503.87     | 3470.1      | -1.02
-process_resident_memory_bytes      | 1579757568  | 1634140160  | 3.44
-process_resident_memory_peak_bytes | 2818256896  | 2770223104  | -1.7
-process_io_read_bytes_total        | 42186355770 | 42023530052 | -0.38
-process_io_written_bytes_total     | 5540444607  | 5449190023  | 1.65
+Metric                             | v1.127.0    | pt-index
+---------------------------------- | ----------- | -------------------
+process_cpu_seconds_system_total   | 218.84      | 193.63       -11.52
+process_cpu_seconds_total          | 3722.71     | 3663.73      +1.58
+process_cpu_seconds_user_total     | 3503.87     | 3470.1       -1.02
+process_resident_memory_bytes      | 1579757568  | 1634140160   +3.44
+process_resident_memory_peak_bytes | 2818256896  | 2770223104   -1.7
+process_io_read_bytes_total        | 42186355770 | 42023530052  -0.38
+process_io_written_bytes_total     | 5540444607  | 5449190023   +1.65
 
 Raw load logs:
 
@@ -165,7 +167,7 @@ make tsbs-plot-load \
 
 ### Non-Empty with Restart
 
-Overall the `pt-index` performance can be noticeably slower than `v1.127.0`
+Overall, the `pt-index` performance can be noticeably slower than `v1.127.0`
 right after the upgrade.
 
 Load summary:
@@ -181,15 +183,15 @@ Below is the graph of the sample load rate over time:
 
 Comparison of some important metrics
 
-Metric                             | v1.127.0    | pt-index    | diff %
----------------------------------- | ----------- | ----------- | ------
-process_cpu_seconds_system_total   | 176.44      | 246.88      | 39.92
-process_cpu_seconds_total          | 3558.51     | 3977.55     | 11.77
-process_cpu_seconds_user_total     | 3382.07     | 3730.67     | 10.31
-process_resident_memory_bytes      | 1738272768  | 1833246720  | 5.46
-process_resident_memory_peak_bytes | 2207891456  | 3034320896  | 37.43
-process_io_read_bytes_total        | 42104240428 | 42609369274 | 1.2
-process_io_written_bytes_total     | 5417114825  | 5852539851  | 8.04
+Metric                             | v1.127.0    | pt-index
+---------------------------------- | ----------- | ------------------
+process_cpu_seconds_system_total   | 176.44      | 246.88       +39.92
+process_cpu_seconds_total          | 3558.51     | 3977.55      +11.77
+process_cpu_seconds_user_total     | 3382.07     | 3730.67      +10.31
+process_resident_memory_bytes      | 1738272768  | 1833246720   +5.46
+process_resident_memory_peak_bytes | 2207891456  | 3034320896   +37.43
+process_io_read_bytes_total        | 42104240428 | 42609369274  +1.2
+process_io_written_bytes_total     | 5417114825  | 5852539851   +8.04
 
 Raw load logs:
 
@@ -247,19 +249,19 @@ make tsbs-plot-load \
 Index queries are ones that let you retrieve metric or label names, label
 values, etc.
 
-This section also includes basic data retrieval. But the data queries used
-here are not designed to test the performance various Prom/MetricsQL language
+This section also includes basic data retrieval. However, the data queries used
+here are not designed to test the performance of various Prom/MetricsQL language
 constructs (see [Data Queries](#data-queries) for this). Data retrieval also
 involves querying index, and we use simple queries (such as `select *`) to check
 the accompanying index queries.
 
 The following use cases are considered:
 
-1. `Before upgrade`. The majority of the users are the existing deployments will
-   already have index data at least in the legacy curr indexDB. The perfomance
-   of the existing deployments constitutes the baseline that both new that and
-   existing deployments that upgraded to pt-index should be compared with.
-2. `Right after upgrade`. The upgraded existing deployments will still be using
+1. `Before upgrade`. The majority of the users already have existing deployments
+   which have index data at least in the legacy curr indexDB. The perfomance
+   of the existing deployments constitutes the baseline that both new and
+   existing deployments that upgraded to pt-index will be compared with.
+2. `Right after upgrade`. The upgraded existing deployments will mostly be using
    the legacy index shortly after upgrade since the pt-index has just started to
    be populated. So it is important to check how queries against legacy curr
    indexDB perform before and right after the upgrade.
@@ -267,30 +269,31 @@ The following use cases are considered:
    use legacy index for until it gets rotated out. So it is important to check
    how queries against pt-index and legacy curr indexDB perform when the half of
    the entries are in pt-index and another half is in legacy index.
-4. `Long type after upgrade or new`. Some deployments will start from pt-index
+4. `Long time after upgrade or new`. Some deployments will start from pt-index
    right away. Also, the upgraded existing deployments, will become "pure"
    pt-index deployments when the legacy index is rotated out. Even if both are
    not dealing with entries split between legacy and pt index, it is important
    to check how "pure" pt-index deployments perform compared to legacy index.
 
-For each use case and each index query type, we perform two benchmark:
-- Retrieve entries for different number of unique time series (`100`, `1k`,
-  `10k`, `100k`, `1M`) on `1d` time range.
-- Retrieve entries for `100k` unique time series on different time ranges
-  (`1d`, `1w`, `1m`, `2m`, `6m`).
+For each use case and each index query type, we perform two benchmarks:
+- `VariableSeries`. Retrieve entries for different number of unique time series
+  (`100`, `1k`, `10k`, `100k`, `1M`) on `1d` time range.
+- `VariableTimeRange`. Retrieve entries for `100k` unique time series on
+  different time ranges (`1d`, `1w`, `1m`, `2m`, `6m`).
 
-We have performed several benchmark results below is a quick summary based on
-manual analysis of all of them. All APIs share the same trends:
+We have performed several runs of these benchmarks. Below is a quick summary
+based on
+[manual analysis](https://docs.google.com/spreadsheets/d/1e9pFNry-lmN8H6WhG9FWbaWKJM5slUn8mlA5F2UhARE/edit?gid=0#gid=0)
+of the results. All APIs share the same trends:
 
-- When querying various numbers of unique timeseries, the query performance for
-  smaller numbers (<= 10k) can degrade up to 50%. But it is often the same or
-  even faster. The performance for higher numbers (100k, 1M) is generally the
-  same and can be up to 50% better. This is good given that in a typical
-  enterprise deployment the number of unique timeseries in a query response
-  often exceeds 100k.
-- When querying 100k on various time ranges, the performace generally stays the
-  same and can even get better by up to 50%. However on 1m, 2m the performance
-  can at times get worse by up to 15%.
+- `VariableSeries`. The query performance for smaller numbers (<= 10k) is often
+  the same or even better, but can degrade up to 50% at times. The performance
+  for higher numbers (100k, 1M) is generally the same and can be up to 50%
+  better. This is good given that in a typical enterprise deployment the number
+  of unique timeseries in a query response often exceeds 100k.
+- `VariableTimeRange`. The performace generally stays the same and can even get
+  better by up to 50%. However on `1m` and `2m` the performance can at times get
+  worse by up to 15%.
 
 Raw results of the three runs:
 
@@ -300,7 +303,7 @@ Raw results of the three runs:
 
 ### How to Run
 
-To test the performance of index queries we use Go benchmarks. Specifically,
+We use Go benchmarks to test the performance of index queries. Specifically,
 we will be using `BenchmarkSearch` located in
 `lib/storage/storage_timing_test.go`. It allows to measure the performance of
 of most of the vmstorage query API, such as:
@@ -311,9 +314,7 @@ of most of the vmstorage query API, such as:
 - `SearchLabelValues` (used in [/api/v1/label/…/values](https://docs.victoriametrics.com/victoriametrics/url-examples/#apiv1labelvalues))
 - `SearchTagValueSuffixes` and `SearchGraphitePaths` (used in [/graphite/metrics/find](https://docs.victoriametrics.com/victoriametrics/url-examples/#graphitemetricsfind))
 
-For each query type the same dataset is used. This dataset is ingested once
-before a given benchmark and then queried multiple times within the benchmark
-loop.
+This benchmark uses the same dataset for each query type.
 
 `pt-index` is a big change and it may pontetially affect the index query
 performance depending on
@@ -322,16 +323,16 @@ performance depending on
 - How big is the query time range
 - How index data is split bewteen legacy and pt-index
 
-The benchmark dataset is configurable with this params, i.e.
+Therefore, the benchmark dataset is configurable with these params, i.e.
 a given benchmark can specify:
 
 - The number of unique timeseries: `100`, `1k`, `10k`, `100k`, `1M`
 - The time range in which data will be contained: `1d`, `1w`, `1m`, `2m`, `6m`
-- How index data is split between legacy and pt-index
+- How index data is split between legacy and pt-index.
 
 For example, the following benchmark measures the performance of retrieving `100k`
-metrics names within `1d` time range split across legacy curr indexDB and the
-partition indexDB:
+metrics names within `1d` time range split across legacy curr indexDB and
+`pt-index`.
 
 ```
 BenchmarkSearch/MetricNames/CurrPt/VariousSeries/1000000
@@ -355,15 +356,15 @@ To run this benchmark for all query types for all numbers of unique timeseries
 and all time ranges:
 
 ```
-BenchmarkSearch/.*/CurrPt/VariousMetrics/.*
+BenchmarkSearch/.*/CurrPt/VariousSeries/.*
 BenchmarkSearch/.*/PtOnly/VariousTimeRange/.*
 ```
 
 There can be many combinations and in order to make sense of these results,
-let's focus on the use cases that users will be facing after releasing the
-pt-index (see above).
+let's focus on the use cases that users will be facing after the `pt-index` is
+released (see above).
 
-For each use case, we will run benchmarks that measures the performance of
+For each use case, we will run benchmarks that measure the performance of
 queries for different numbers of unique timeseries and different time ranges.
 Then, we will compare them.
 
@@ -381,7 +382,7 @@ BenchmarkSearch/.*/CurrPt/(VariousMetrics|VariousTimeRange)/.*
 BenchmarkSearch/.*/PtOnly/(VariousMetrics|VariousTimeRange)/.*
 ```
 
-The following script will switch to the necessary tags and branches, run the
+The following script will switch to the correct tags and branches, run the
 benchmarks, and write the comparison results to a file.
 
 ```shell
@@ -432,7 +433,9 @@ double-groupby-1      | 1.46              | 1.47     +0.68%   | 1.29     -11.64%
 
 **Summary**: Right after the upgrade (when all entries are in legacy index), the
 performace gets even better than it was before the upgrade. However, as the
-deployment starts to use pt-index the performance gets worse.
+deployment starts to use pt-index the performance gets worse. After
+transitioning to using `pt-index` only, the performance gets better but it is
+still worse than it was originally (in `v1.127.0`.
 
 Raw benchmark logs:
 
