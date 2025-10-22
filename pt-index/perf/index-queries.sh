@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 function bench_search() {
 	local branch_or_tag=$1
 	local index_config=$2
@@ -9,8 +11,8 @@ function bench_search() {
 
 	go test ./lib/storage -run="^$" \
 	    -bench="^BenchmarkSearch/.*/${index_config}/(VariableSeries|VariableTimeRange)/.*$" \
-	    -count=6 \
-	    -timeout=2h \
+	    -count=20 \
+	    -timeout=24h \
 	    -benchmem \
 	    --loggerLevel=ERROR \
 		| tee ${outfile}
@@ -23,14 +25,14 @@ LEGACY=v1.127.0
 PT_INDEX=issue-7599
 
 LEGACY_CURR_ONLY=${LEGACY}-CurrOnly
-PT_INDEX_CURR_ONLY=${PT_INDEX}-CurrOnly
-PT_INDEX_PT_ONLY=${PT_INDEX}-PtOnly
-PT_INDEX_CURR_PT=${PT_INDEX}-CurrPt
+PT_INDEX_CURR_ONLY=pt-index-CurrOnly
+PT_INDEX_CURR_PT=pt-index-CurrPt
+PT_INDEX_PT_ONLY=pt-index-PtOnly
 LEGACY_CURR_ONLY_LOG=/tmp/${TS}-${LEGACY_CURR_ONLY}.log
 PT_INDEX_CURR_ONLY_LOG=/tmp/${TS}-${PT_INDEX_CURR_ONLY}.log
 PT_INDEX_CURR_PT_LOG=/tmp/${TS}-${PT_INDEX_CURR_PT}.log
 PT_INDEX_PT_ONLY_LOG=/tmp/${TS}-${PT_INDEX_PT_ONLY}.log
-LEGACY_PT_INDEX_CURR_PT_LOG=/tmp/${TS}-${LEGACY}-${PT_INDEX}-CurrOnly-PtOnly-CurrPt.log
+LEGACY_PT_INDEX_CURR_PT_LOG=/tmp/${TS}-${LEGACY}-pt-index.log
 
 bench_search ${LEGACY} CurrOnly ${LEGACY_CURR_ONLY_LOG}
 bench_search ${PT_INDEX} CurrOnly ${PT_INDEX_CURR_ONLY_LOG}
@@ -43,6 +45,8 @@ benchstat \
 	${PT_INDEX_CURR_PT}=${PT_INDEX_CURR_PT_LOG} \
 	${PT_INDEX_PT_ONLY}=${PT_INDEX_PT_ONLY_LOG} \
 	> ${LEGACY_PT_INDEX_CURR_PT_LOG}
+
+sed -i '/Prev/d' ${LEGACY_PT_INDEX_CURR_PT_LOG}
 
 echo
 echo ${LEGACY_PT_INDEX_CURR_PT_LOG}
