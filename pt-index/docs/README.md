@@ -136,8 +136,13 @@ Gragana dashboard. The cache will not be reset.
 
 `prevHourMetricIDs` and `currHourMetricIDs`. Store unique metricIDs of ingested
 samples whose timestamps belongs to the previous and current hour, used for
-reporting `active timeseries` metric on Grafana dashboard. These caches will not
-be reset.
+reporting `active timeseries` metric on Grafana dashboard, persisted to
+`cache/prev_hour_metric_ids` and `cache/curr_hour_metric_ids`. These caches will
+be reset because creating index records relies on their contents. Since there is
+no way to tell which indexDB the cache contents belongs to, two different file
+will be used to persist these caches: `cache/prev_hour_metric_ids_v2` and
+`cache/curr_hour_metric_ids_v2`. On Grafana dasboards this will be reflected as
+a drop in active timeseries. This drop will be back to normal in an hour.
 
 `nextDayMetricIDs`. Stores metrics during the next day index prefill, used for
 speeding up the sample ingestion during the last hour of the day, persisted to
