@@ -1,0 +1,26 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: rtm0-perf
+  namespace: rtm0-perf
+spec:
+  image:
+    # tag: v1.128.0
+    tag: heads-issue-7599-0-ga1b720821e
+  retentionPeriod: "6"
+  removePvcAfterDelete: true
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 50Gi
+  extraArgs:
+    dedup.minScrapeInterval: 60s
+  resources:
+    requests:
+      memory: 8Gi
+      cpu: 4000m
+    limits:
+      memory: 8Gi
+      cpu: 4000m
