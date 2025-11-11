@@ -76,7 +76,7 @@ But vmstorage will create missing records in pt-index as new samples are
 ingested, both for existing timeseries and new ones. For existing timeseries,
 the metricIDs will be reused if they are found in `tsidCache`. This may
 initially slow down the ingestion (see the
-[Data Ingestion](perf.md#data-ingestion) benchmark results).
+[Data Ingestion](perf/README.md#data-ingestion) benchmark results).
 
 This is true only for existing deployments that switched to pt-index. New
 deployments that started to use pt-index right away won't have legacy indexDBs
@@ -92,7 +92,7 @@ During data retrieval, legacy and partition indexDBs will be queried
 concurrently. At first, most of the entries will be found in legacy indexDBs,
 but over time, as the partition index is filled in and new partitions are
 created, most of the index data will be coming from pt-index. See
-[Index Queries](perf.md#index-queries) and [Data Queries](perf.md#data-queries)
+[Index Queries](perf/README.md#index-queries) and [Data Queries](perf/README.md#data-queries)
 benchmark results for different use cases.
 
 Legacy indexDBs will not become fully read-only though. It is possible that new
@@ -210,4 +210,4 @@ samples arrive.
   to caching.
 
 We have performed the `upgrage-downgrade-upgrade` test in our sandbox. Steps and
-results can be found [here](test.md#upgrade-downgrade-upgrade).
+results can be found [here](test/README.md#upgrade-downgrade-upgrade).
