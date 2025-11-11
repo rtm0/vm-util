@@ -2,6 +2,27 @@
 
 ## Config 01
 
+Create a private cluster:
+
+```shell
+vm-cluster-create
+```
+
+Set up Cloud NAT: https://cloud.google.com/nat/docs/gke-example#create-nat
+
+Install [VictoriaMetrics K8s Stack](https://docs.victoriametrics.com/helm/victoria-metrics-k8s-stack/):
+
+```shell
+helm repo add vm https://victoriametrics.github.io/helm-charts/
+helm repo update
+helm search repo vm/victoria-metrics-k8s-stack -l
+
+
+helm install vmks vm/victoria-metrics-k8s-stack \
+  --set vmsingle.enabled=false
+```
+
+
 Want:
 
 - 8.3M*4 = 33.3M active timeseries

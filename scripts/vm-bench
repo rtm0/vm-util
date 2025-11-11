@@ -11,9 +11,7 @@ COUNT=${2:-10}
 PREFIX=${NAME}-count${COUNT}
 
 BENCHMARKS=(
-  BenchmarkStorageAddRows \
-  BenchmarkStorageAddRows_VariousTimeRanges \
-  BenchmarkStorageAddRows_VariousDataPatterns
+  BenchmarkStorageAddRows/1000
 )
 
 for b in "${BENCHMARKS[@]}"

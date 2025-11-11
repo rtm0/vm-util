@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+CLUSTER_NAME=${1:-cluster-$(date +%s)}
+ZONE=${2:-us-central1-a}
+NUM_NODES=${2:-8}
+
+gcloud beta container clusters create ${CLUSTER_NAME} \
+    --zone=${ZONE} \
+    --machine-type=e2-standard-8 \
+	--disk-size=100 \
+	--num-nodes=${NUM_NODES} \
+    --enable-autoscaling --min-nodes=0 --max-nodes=${NUM_NODES} \
+	--enable-private-nodes \
+    --enable-ip-alias \
+	--master-ipv4-cidr=172.16.0.0/28 \
+	--no-enable-master-authorized-networks
+
+gcloud container clusters get-credentials ${CLUSTER_NAME} \
+    --zone=${ZONE}

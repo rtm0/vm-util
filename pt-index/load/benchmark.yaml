@@ -1,0 +1,13 @@
+vmtag: v1.129.0
+targetsCount: 60000
+scrapeInterval: 60s
+queryInterval: 10s
+scrapeConfigUpdatePercent: 2
+scrapeConfigUpdateInterval: 10m
+writeConcurrency: 16
+writeReplicaMem: "16Gi"
+writeReplicaCPU: 4
+remoteStorages:
+  vm:
+    writeURL: "http://vminsert-loadtest.loadtest:8480/insert/0/prometheus/"
+    readURL: "http://vmselect-loadtest.loadtest:8481/select/0/prometheus"
