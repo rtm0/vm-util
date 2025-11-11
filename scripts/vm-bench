@@ -11,7 +11,9 @@ COUNT=${2:-10}
 PREFIX=${NAME}-count${COUNT}
 
 BENCHMARKS=(
-	BenchmarkSearch/MetricNames/PtOnly/VariableTimeRange
+  BenchmarkStorageAddRows \
+  BenchmarkStorageAddRows_VariousTimeRanges \
+  BenchmarkStorageAddRows_VariousDataPatterns
 )
 
 for b in "${BENCHMARKS[@]}"
