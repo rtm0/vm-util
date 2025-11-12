@@ -11,7 +11,8 @@ COUNT=${2:-10}
 PREFIX=${NAME}-count${COUNT}
 
 BENCHMARKS=(
-  BenchmarkStorageAddRows/1000
+	BenchmarkSearch/Data/CurrOnly/VariableSeries \
+	BenchmarkSearch/MetricNames/CurrOnly/VariableSeries
 )
 
 for b in "${BENCHMARKS[@]}"
