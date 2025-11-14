@@ -33,7 +33,7 @@ do
 done
 
 # Build LTS1 images seprately because
-# 1) `make package` because it fails because vmalert-tool does not have
+# 1) `make package` fails to package vmalert-tool because it does not have
 # Dockerfile.
 # 2) `make package` also builds victoria-logs images.
 git switch ${LTS1_SINGLE_BRANCH}
@@ -58,5 +58,3 @@ do
   docker scout cves $img
   echo
 done
-
-exit 1
