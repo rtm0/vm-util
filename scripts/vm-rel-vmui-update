@@ -1,0 +1,28 @@
+#!/bin/bash
+
+BASEDIR=$(realpath $(dirname $0))
+source ${BASEDIR}/vm-libbranch
+
+function vm_rel_make_vmui_update() {
+    local single_remote=$1
+    local single_branch=$2
+    local cluster_remote=$3
+    local cluster_branch=$4
+
+    vm_branch_switch_and_reset ${single_remote} ${single_branch}
+    make vmui-update
+    git add .
+    git commit -sm "make vmui-update"
+    # git push ${single_remote} ${single_branch}
+    commit=$(git rev-parse HEAD)
+
+    vm_branch_switch_and_reset ${cluster_remote} ${cluster_branch}
+    git cherry-pick ${commit}
+    # git push ${cluster_remote} ${cluster_branch}
+}
+
+vm_rel_make_vmui_update ${OSS_SINGLE_REMOTE} ${OSS_SINGLE_BRANCH} ${OSS_CLUSTER_REMOTE} ${OSS_CLUSTER_BRANCH}
+vm_rel_make_vmui_update ${ENT_SINGLE_REMOTE} ${ENT_SINGLE_BRANCH} ${ENT_CLUSTER_REMOTE} ${ENT_CLUSTER_BRANCH}
+
+echo
+echo "DON'T FORGET TO PUSH COMMITS"
