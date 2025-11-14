@@ -1,0 +1,62 @@
+#!/bin/bash
+
+BASEDIR=$(realpath $(dirname $0))
+source ${BASEDIR}/vm-libbranch
+
+for branch in ${OSS_SINGLE_BRANCH} \
+  ${OSS_CLUSTER_BRANCH} \
+  ${ENT_SINGLE_BRANCH} \
+  ${ENT_CLUSTER_BRANCH} \
+  ${LTS1_SINGLE_BRANCH} \
+  ${LTS1_CLUSTER_BRANCH} \
+  ${LTS2_SINGLE_BRANCH} \
+  ${LTS2_CLUSTER_BRANCH}
+do
+  git switch $branch
+  make clean-checkers govulncheck
+  trivy fs . --scanners=vuln
+done
+
+# asks for user input. Choose N if you don't want all images to be deleted.
+docker system prune -a
+
+for branch in ${OSS_SINGLE_BRANCH} \
+  ${OSS_CLUSTER_BRANCH} \
+  ${ENT_SINGLE_BRANCH} \
+  ${ENT_CLUSTER_BRANCH} \
+  ${LTS1_CLUSTER_BRANCH} \
+  ${LTS2_SINGLE_BRANCH} \
+  ${LTS2_CLUSTER_BRANCH}
+do
+  git switch $branch
+  make package
+done
+
+# Build LTS1 images seprately because
+# 1) `make package` because it fails because vmalert-tool does not have
+# Dockerfile.
+# 2) `make package` also builds victoria-logs images.
+git switch ${LTS1_SINGLE_BRANCH}
+make package-victoria-metrics \
+  package-vmagent \
+  package-vmalert \
+  package-vmauth \
+  package-vmbackup \
+  package-vmrestore \
+  package-vmctl \
+  package-vmbackupmanager \
+  package-vmgateway
+
+
+IMGS=$(docker images --format "{{.Repository}}:{{.Tag}}" | grep victoriametrics)
+
+for img in ${IMGS}
+do
+  echo $img
+  echo
+  grype --only-fixed $img
+  docker scout cves $img
+  echo
+done
+
+exit 1
