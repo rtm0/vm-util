@@ -80,8 +80,8 @@ TODO
 
     ```shell
     k -n ${LOADTEST_NAME} apply -f ${LOADTEST_NAME}/vmsingle-oss.yaml
-    k -n ${LOADTEST_NAME} apply -f ${LOADTEST_NAME}/vmcluster-oss.yaml
     k -n ${LOADTEST_NAME} apply -f ${LOADTEST_NAME}/vmsingle-ent.yaml
+    k -n ${LOADTEST_NAME} apply -f ${LOADTEST_NAME}/vmcluster-oss.yaml
     k -n ${LOADTEST_NAME} apply -f ${LOADTEST_NAME}/vmcluster-ent.yaml
     ```
 
@@ -110,9 +110,10 @@ TODO
 
     ```shell
     k delete -f ${LOADTEST_NAME}/vmsingle-oss.yaml
-    k delete -f ${LOADTEST_NAME}/vmcluster-oss.yaml
     k delete -f ${LOADTEST_NAME}/vmsingle-ent.yaml
+    k delete -f ${LOADTEST_NAME}/vmcluster-oss.yaml
     k delete -f ${LOADTEST_NAME}/vmcluster-ent.yaml
+
     k -n ${LOADTEST_NAME} delete pvc --all
     ```
 
