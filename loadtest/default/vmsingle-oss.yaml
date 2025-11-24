@@ -2,12 +2,12 @@ apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMSingle
 metadata:
   name: default
-  namespace: loadtest
+  namespace: default
 spec:
   image:
     tag: v1.130.0
   retentionPeriod: "6"
-  removePvcAfterDelete: true
+  # removePvcAfterDelete: true
   storage:
     accessModes:
       - ReadWriteOnce
