@@ -26,6 +26,9 @@ spec:
     replicaCount: 2
     image:
       pullPolicy: "Always"
+    extraArgs:
+      search.logSlowQueryDuration: 15s
+      search.logSlowQueryStats: 15s
     resources:
       requests:
         cpu: "2"

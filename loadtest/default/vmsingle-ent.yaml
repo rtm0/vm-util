@@ -20,6 +20,8 @@ spec:
         storage: 500Gi
   extraArgs:
     dedup.minScrapeInterval: 60s
+    "search.logSlowQueryStats": 15s
+    "search.logSlowQueryDuration": 15s
   resources:
     requests:
       memory: 8Gi
