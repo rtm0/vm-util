@@ -1,0 +1,25 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: default
+  namespace: loadtest
+spec:
+  image:
+    tag: v1.130.0
+  retentionPeriod: "6"
+  removePvcAfterDelete: true
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 500Gi
+  extraArgs:
+    dedup.minScrapeInterval: 60s
+  resources:
+    requests:
+      memory: 8Gi
+      cpu: "4"
+    limits:
+      memory: 8Gi
+      cpu: "4"
