@@ -1,0 +1,13 @@
+vmtag: v1.129.1
+targetsCount: 10000
+scrapeInterval: 60s
+queryInterval: 10s
+scrapeConfigUpdatePercent: 2
+scrapeConfigUpdateInterval: 10m
+writeConcurrency: 16
+writeReplicaMem: "16Gi"
+writeReplicaCPU: 4
+remoteStorages:
+  vm:
+    writeURL: "http://vmsingle-new-tfss-cache.new-tfss-cache:8428/api/v1/write"
+    readURL: "http://vmsingle-new-tfss-cache.new-tfss-cache:8428"

@@ -1,0 +1,27 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMSingle
+metadata:
+  name: new-tfss-cache
+  namespace: new-tfss-cache
+spec:
+  image:
+    # tag: v1.130.0
+    # tag: heads-new-tfss-cache-0-gde3c814e5d-dirty-8190a3b6
+    tag: heads-new-tfss-cache2-0-gde603d4a2c-dirty-8190a3b6
+  retentionPeriod: "1"
+  # removePvcAfterDelete: true
+  storage:
+    accessModes:
+      - ReadWriteOnce
+    resources:
+      requests:
+        storage: 500Gi
+  extraArgs:
+    dedup.minScrapeInterval: 60s
+  resources:
+    requests:
+      memory: 16Gi
+      cpu: 6000m
+    limits:
+      memory: 16Gi
+      cpu: 6000m
