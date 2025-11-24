@@ -125,7 +125,7 @@ TODO
 
 4.  Delete cluster
 
-    ```
+    ```sh
     vm-cluster-list
     vm-cluster delete ${CLUSTER_NAME}
     ```
