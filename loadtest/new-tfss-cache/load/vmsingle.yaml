@@ -7,7 +7,7 @@ spec:
   image:
     # tag: v1.130.0
     # tag: heads-new-tfss-cache-0-gde3c814e5d-dirty-8190a3b6
-    tag: heads-new-tfss-cache2-0-gde603d4a2c-dirty-8190a3b6
+    tag: heads-new-tfss-cache2-0-gee29ada2b1-dirty-8190a3b6
   retentionPeriod: "1"
   # removePvcAfterDelete: true
   storage:

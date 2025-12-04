@@ -1,8 +1,8 @@
 vmtag: v1.130.0
-targetsCount: 10000
+targetsCount: 15000
 scrapeInterval: 60s
 queryInterval: 10s
-scrapeConfigUpdatePercent: 2
+scrapeConfigUpdatePercent: 5
 scrapeConfigUpdateInterval: 10m
 writeConcurrency: 16
 writeReplicaMem: "16Gi"
