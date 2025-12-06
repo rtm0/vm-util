@@ -7,7 +7,38 @@ prod.
 
 ## Load Calculations
 
-TODO
+Use [loadcalc.go](loadcalc.go). For example:
+
+```shell
+go run loadcalc.go -seriesPerTarget=777 --targetsCount=10000 -scrapeInterval=15s -scrapeConfigUpdatePercent=1 -scrapeConfigUpdateInterval=1m
+Ingestion rate 518000
+Churn rate 1s 1295
+Churn rate 1h 4662000
+Churn rate 24h 111888000
+Active time series (initial) 7770000
+Active time series (effective) 12432000
+```
+
+### How to find number of time series per targer:
+
+The number of metrics exported by a target varies depending on environment. It
+is best to [set up](#set-up) some loadtest with default values and then find
+that number using the instructions below.
+
+-   Make `vmselect` available locally
+
+    ```shell
+    k port-forward svc/vmselect-${LOADTEST_NAME} 8481
+    ```
+
+-   Access the `VMUI`: http://localhost:8481/select/0/vmui/#
+-   Navigate to `Explore > Explore Cardinality` page
+-   Enter `{instance="host-0", revision="r0"}` into the `Time series selector`
+-   Hit `Enter`
+-   The `Total series` counter will show how many unique time series exports
+    that given instance.
+-   Try changing the instance to some other host. The counter will be more or
+    less the same.
 
 ## Set Up
 

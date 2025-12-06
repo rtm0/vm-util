@@ -6,7 +6,7 @@ metadata:
 spec:
   retentionPeriod: "6"
   replicationFactor: 1
-  clusterVersion: "v1.123.0-cluster"
+  clusterVersion: "v1.131.0-cluster"
   vminsert:
     replicaCount: 1
     image:
@@ -14,10 +14,10 @@ spec:
     resources:
       requests:
         cpu: "1"
-        memory: 500Mi
+        memory: 1Gi
       limits:
         cpu: "1"
-        memory: 500Mi
+        memory: 1Gi
   vmselect:
     replicaCount: 2
     image:
@@ -27,10 +27,10 @@ spec:
     resources:
       requests:
         cpu: "3"
-        memory: 6Gi
+        memory: 12Gi
       limits:
         cpu: "3"
-        memory: 6Gi
+        memory: 12Gi
   vmstorage:
     replicaCount: 4
     rollingUpdateStrategyBehavior:
@@ -42,11 +42,11 @@ spec:
       precisionBits: "64"
     resources:
       requests:
-        cpu: "2"
-        memory: 4Gi
+        cpu: "4"
+        memory: 16Gi
       limits:
-        cpu: "2"
-        memory: 4Gi
+        cpu: "4"
+        memory: 16Gi
     storage:
       volumeClaimTemplate:
         spec:
@@ -59,4 +59,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.123.0"
+        tag: "v1.131.0"

@@ -1,9 +1,9 @@
-vmtag: v1.130.0
-targetsCount: 15000
-scrapeInterval: 60s
+vmtag: v1.131.0
+targetsCount: 10000
+scrapeInterval: 15s
 queryInterval: 10s
-scrapeConfigUpdatePercent: 5
-scrapeConfigUpdateInterval: 10m
+scrapeConfigUpdatePercent: 1
+scrapeConfigUpdateInterval: 1m
 writeConcurrency: 16
 writeReplicaMem: "16Gi"
 writeReplicaCPU: 4
