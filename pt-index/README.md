@@ -113,43 +113,66 @@ removed and only 2 subdirs will remain.
 
 Sometimes, a new feature requires resetting certain persistent caches. Below is
 the full list of such caches that provides a brief description of each cache and
-what will happen to them after the update.
+what will happen to it after the update.
 
-`tsidCache`. Stores `metricName-to-TSID` mappings, used for speeding up the
+#### storage/tsid
+
+The cache Stores `metricName-to-TSID` mappings, used for speeding up the
 ingestion and reusing metricIDs for the same metricNames, persisted to
-`cache/metricName_tsid` file, named as `storage/tsid` on Grafana dashboard. The
-cache will not be reset and will be used for re-using metricIDs for existing
+`cache/metricName_tsid` file, named as `storage/tsid` on Grafana dashboard.
+
+The cache will not be reset and will be used for re-using metricIDs for existing
 timeseries. Also, unlike in previous versions, the cache will not be reset after
 timeseries deletion.
 
-`metricNameCache`. Stores `metricID-to-metricName` mappings, used for speeding
-up data and index queries,  persisted to `cache/metricID_metricName` file, named
-as `storage/metricName` on Grafana dashboard. The cache will not be reset.
+#### storage/metricName
 
-`metricIDCache`. Stores `metricID-to-TSID` mappings, used for speeding up data
-queries, persisted to `cache/metricID_tsid` file, named as `storage/metricIDs`
-on Grafana dashboard. The cache will not be reset.
+The cache stores `metricID-to-metricName` mappings, used for speeding up data
+and index queries,  persisted to `cache/metricID_metricName` file, named as
+`storage/metricName` on Grafana dashboard.
 
-`metricTracker`. Stores metric name usage stats, persisted to
+The cache will not be reset.
+
+#### storage/metricIDs
+
+The cache stores `metricID-to-TSID` mappings, used for speeding up data queries,
+persisted to `cache/metricID_tsid` file, named as `storage/metricIDs` on Grafana
+dashboard.
+
+The cache will not be reset.
+
+#### storage/metricNamesStatsTracker
+
+The cache stores metric name usage stats, persisted to
 `cache/metric_usage_tracker` file, named as `storage/metricNamesStatsTracker` on
-Gragana dashboard. The cache will not be reset.
+Gragana dashboard.
 
-`prevHourMetricIDs` and `currHourMetricIDs`. Store unique metricIDs of ingested
-samples whose timestamps belongs to the previous and current hour, used for
-reporting `active timeseries` metric on Grafana dashboard, persisted to
-`cache/prev_hour_metric_ids` and `cache/curr_hour_metric_ids`. These caches will
-be reset because creating index records relies on their contents. Since there is
-no way to tell which indexDB the cache contents belongs to, two different file
-will be used to persist these caches: `cache/prev_hour_metric_ids_v2` and
-`cache/curr_hour_metric_ids_v2`. On Grafana dasboards this will be reflected as
-a drop in active timeseries. This drop will be back to normal in an hour. Files
-used to store previous cache version, i.e. `cache/prev_hour_metric_ids` and
-`cache/curr_hour_metric_ids`, can be deleted manually.
+The cache will not be reset.
 
-`nextDayMetricIDs`. Stores metrics during the next day index prefill, used for
-speeding up the sample ingestion during the last hour of the day, persisted to
-`cache/next_day_metric_ids_v2` file. This cache will be reset because the
-metricIDs it contains correspond to the legacy indexDB.
+#### prevHourMetricIDs and currHourMetricIDs
+
+The caches store unique metricIDs of ingested samples whose timestamps belong to
+the previous and current hour respectively, used for reporting
+`active timeseries` metric on Grafana dashboard, persisted to
+`cache/prev_hour_metric_ids` and `cache/curr_hour_metric_ids`.
+
+These caches will be reset because creating index records relies on their
+contents. Since there is no way to tell which indexDB the cache contents
+corresponds to, different files will be used to persist these caches:
+`cache/prev_hour_metric_ids_v2` and `cache/curr_hour_metric_ids_v2`. On Grafana
+dasboards this will be reflected as a drop in active timeseries. This drop will
+be back to normal within an hour. Files used to store previous cache version,
+i.e. `cache/prev_hour_metric_ids` and `cache/curr_hour_metric_ids`, can be
+deleted manually.
+
+#### nextDayMetricIDs
+
+The cache stores metrics during the next day index prefill, used for speeding up
+the sample ingestion during the last hour of the day, persisted to
+`cache/next_day_metric_ids_v2` file.
+
+This cache will be reset because the metricIDs it contains correspond to the
+legacy indexDB.
 
 ### Backup/restore
 
