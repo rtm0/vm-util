@@ -1,52 +1,54 @@
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMCluster
 metadata:
-  name: loadtest
-  namespace: loadtest
+  name: pt-index
+  namespace: pt-index
 spec:
-  retentionPeriod: "1"
+  retentionPeriod: "6"
   replicationFactor: 1
-  clusterVersion: "v1.129.0-enterprise-cluster"
+  clusterVersion: "v1.132.0-enterprise-cluster"
   license:
     keyRef:
       key: license
       name: vm-license
   vminsert:
-    replicaCount: 1
+    replicaCount: 2
     image:
       pullPolicy: Always
     resources:
       requests:
-        cpu: 2000m
-        memory: 2Gi
+        cpu: "2"
+        memory: 1Gi
       limits:
-        cpu: 2000m
-        memory: 2Gi
+        cpu: "2"
+        memory: 1Gi
   vmselect:
     replicaCount: 2
     image:
       pullPolicy: "Always"
+    extraArgs:
+      search.logSlowQueryDuration: 15s
+      search.logSlowQueryStats: 15s
     resources:
       requests:
-        cpu: 2000m
+        cpu: "4"
         memory: 8Gi
       limits:
-        cpu: 2000
+        cpu: "4"
         memory: 8Gi
   vmstorage:
-    replicaCount: 4
+    replicaCount: 2
     rollingUpdateStrategyBehavior:
-      maxUnavailable: 25%
+      maxUnavailable: 100%
     image:
-      tag: heads-issue-7599-enterprise-cluster-0-g7356c81f89
       pullPolicy: Always
     resources:
       requests:
-        cpu: 4000m
-        memory: 16Gi
+        cpu: "8"
+        memory: 32Gi
       limits:
-        cpu: 4000m
-        memory: 16Gi
+        cpu: "8"
+        memory: 32Gi
     storage:
       volumeClaimTemplate:
         spec:
@@ -59,4 +61,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.129.0-enterprise"
+        tag: "v1.132.0-enterprise"
