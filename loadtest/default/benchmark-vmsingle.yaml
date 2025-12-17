@@ -1,12 +1,11 @@
-vmtag: v1.130.0
+vmtag: v1.132.0
 targetsCount: 10000
-scrapeInterval: 60s
+scrapeInterval: 10s
 queryInterval: 10s
-scrapeConfigUpdatePercent: 2
-scrapeConfigUpdateInterval: 10m
-writeConcurrency: 16
+scrapeConfigUpdatePercent: 1
+scrapeConfigUpdateInterval: 1m
+writeReplicas: 1
 writeReplicaMem: "16Gi"
-writeReplicaCPU: 4
 remoteStorages:
   vm:
     writeURL: "http://vmsingle-default:8428/api/v1/write"

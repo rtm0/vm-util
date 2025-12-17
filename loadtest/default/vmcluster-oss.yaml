@@ -6,17 +6,17 @@ metadata:
 spec:
   retentionPeriod: "6"
   replicationFactor: 1
-  clusterVersion: "v1.131.0-cluster"
+  clusterVersion: "v1.132.0-cluster"
   vminsert:
-    replicaCount: 1
+    replicaCount: 2
     image:
       pullPolicy: Always
     resources:
       requests:
-        cpu: "1"
+        cpu: "2"
         memory: 1Gi
       limits:
-        cpu: "1"
+        cpu: "2"
         memory: 1Gi
   vmselect:
     replicaCount: 2
@@ -26,27 +26,24 @@ spec:
       search.logSlowQueryDuration: 15s
     resources:
       requests:
-        cpu: "3"
-        memory: 12Gi
+        cpu: "4"
+        memory: 8Gi
       limits:
-        cpu: "3"
-        memory: 12Gi
+        cpu: "4"
+        memory: 8Gi
   vmstorage:
-    replicaCount: 4
+    replicaCount: 2
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
       pullPolicy: Always
-    extraArgs:
-      memory.allowedPercent: "50"
-      precisionBits: "64"
     resources:
       requests:
-        cpu: "4"
-        memory: 16Gi
+        cpu: "8"
+        memory: 32Gi
       limits:
-        cpu: "4"
-        memory: 16Gi
+        cpu: "8"
+        memory: 32Gi
     storage:
       volumeClaimTemplate:
         spec:
@@ -59,4 +56,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.131.0"
+        tag: "v1.132.0"

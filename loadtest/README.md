@@ -10,14 +10,21 @@ prod.
 Use [loadcalc.go](loadcalc.go). For example:
 
 ```shell
-go run loadcalc.go -seriesPerTarget=777 --targetsCount=10000 -scrapeInterval=15s -scrapeConfigUpdatePercent=1 -scrapeConfigUpdateInterval=1m
-Ingestion rate 518000
-Churn rate 1s 1295
-Churn rate 1h 4662000
-Churn rate 24h 111888000
-Active time series (initial) 7770000
-Active time series (effective) 12432000
+go run loadcalc.go -seriesPerTarget=1000 --targetsCount=10000 -scrapeInterval=10s -scrapeConfigUpdatePercent=1 -scrapeConfigUpdateInterval=1m
+Ingestion rate 1000000
+Churn rate 1s 1666
+Churn rate 1h 6000000
+Churn rate 24h 144000000
+Active time series (initial) 10000000
+Active time series (effective) 16000000
 ```
+
+One scrape target exports roughly 1000 metrics. So use this number when
+calculating the load. Once the load is applied to the system under test, compare
+the expexted values with the actual onces. Adjust if necessary:
+
+-   by changing the target count or
+-   by finding the actual number of metrics per target (see below).
 
 ### How to find number of time series per targer:
 
