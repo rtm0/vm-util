@@ -1,12 +1,11 @@
-vmtag: v1.131.0
-targetsCount: 76305
-scrapeInterval: 5s
+vmtag: v1.132.0
+targetsCount: 20000
+scrapeInterval: 10s
 queryInterval: 10s
 scrapeConfigUpdatePercent: 0.02
 scrapeConfigUpdateInterval: 1m
-writeConcurrency: 32
+writeReplicas: 1
 writeReplicaMem: "16Gi"
-writeReplicaCPU: 4
 remoteStorages:
   vm:
     writeURL: "http://vminsert-gh10064:8480/insert/0/prometheus/"

@@ -1,0 +1,13 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: benchmark-vmagent-collect
+  namespace: gh10064
+spec:
+  podMetricsEndpoints:
+    - port: metrics
+      scheme: http
+  selector:
+    matchLabels:
+      job: vmagent
+      remote-storage-name: vm
