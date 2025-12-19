@@ -27,8 +27,9 @@ spec:
     image:
       pullPolicy: "Always"
     extraArgs:
-      search.logSlowQueryDuration: 15s
-      search.logSlowQueryStats: 15s
+      search.logSlowQueryDuration: 5m
+      search.logSlowQueryStats: 5m
+      search.maxQueryDuration: 5m
     resources:
       requests:
         cpu: "4"
@@ -42,19 +43,21 @@ spec:
       maxUnavailable: 100%
     image:
       pullPolicy: Always
+    extraArgs:
+      storage.cacheSizeIndexDBTagFilters: 4GiB
     resources:
       requests:
-        cpu: "8"
-        memory: 32Gi
+        cpu: "12"
+        memory: 48Gi
       limits:
-        cpu: "8"
-        memory: 32Gi
+        cpu: "12"
+        memory: 48Gi
     storage:
       volumeClaimTemplate:
         spec:
           resources:
             requests:
-              storage: 200Gi
+              storage: 500Gi
           storageClassName: standard-rwo
   requestsLoadBalancer:
     enabled: true
