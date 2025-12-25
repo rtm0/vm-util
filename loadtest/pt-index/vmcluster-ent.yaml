@@ -42,7 +42,7 @@ spec:
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
-      tag: heads-issue-7599-enterprise-cluster-0-g41a74c6fae
+      tag: heads-enterprise-cluster-0-g0d65f26545
       pullPolicy: Always
     extraArgs:
       storage.cacheSizeIndexDBTagFilters: 4GiB
