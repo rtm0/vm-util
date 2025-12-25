@@ -58,7 +58,7 @@ spec:
         spec:
           resources:
             requests:
-              storage: 500Gi
+              storage: 1000Gi
           storageClassName: standard-rwo
   requestsLoadBalancer:
     enabled: true
