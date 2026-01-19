@@ -41,8 +41,9 @@ spec:
     replicaCount: 2
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
+    terminationGracePeriodSeconds: 61
     image:
-      tag: heads-enterprise-cluster-0-g0d65f26545
+      tag: heads-enterprise-cluster-0-g2142e1d007
       pullPolicy: Always
     extraArgs:
       storage.cacheSizeIndexDBTagFilters: 4GiB
@@ -58,7 +59,7 @@ spec:
         spec:
           resources:
             requests:
-              storage: 1000Gi
+              storage: 1500Gi
           storageClassName: standard-rwo
   requestsLoadBalancer:
     enabled: true
