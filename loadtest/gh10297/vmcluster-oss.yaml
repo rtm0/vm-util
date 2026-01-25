@@ -1,0 +1,62 @@
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMCluster
+metadata:
+  name: gh10297
+  namespace: gh10297
+spec:
+  retentionPeriod: "13"
+  replicationFactor: 1
+  clusterVersion: "v1.133.0-cluster"
+  vminsert:
+    replicaCount: 3
+    image:
+      # tag: heads-cluster-0-gddc756d329-dirty-29313ba2
+      pullPolicy: Always
+    resources:
+      requests:
+        cpu: "2"
+        memory: 1Gi
+      limits:
+        cpu: "2"
+        memory: 1Gi
+  vmselect:
+    replicaCount: 2
+    image:
+      pullPolicy: "Always"
+    extraArgs:
+      search.logSlowQueryDuration: 5m
+      search.maxQueryDuration: 5m
+    resources:
+      requests:
+        cpu: "4"
+        memory: 8Gi
+      limits:
+        cpu: "4"
+        memory: 8Gi
+  vmstorage:
+    replicaCount: 8
+    rollingUpdateStrategyBehavior:
+      maxUnavailable: 100%
+    image:
+      # tag: heads-cluster-0-g8c87946824-dirty-73252bbc
+      pullPolicy: Always
+    resources:
+      requests:
+        cpu: "3"
+        memory: 12Gi
+      limits:
+        cpu: "3"
+        memory: 12Gi
+    storage:
+      volumeClaimTemplate:
+        spec:
+          resources:
+            requests:
+              storage: 500Gi
+          storageClassName: standard-rwo
+  requestsLoadBalancer:
+    enabled: true
+    spec:
+      image:
+        pullPolicy: "Always"
+        tag: "v1.133.0"

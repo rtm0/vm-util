@@ -1,0 +1,12 @@
+vmtag: v1.133.0
+targetsCount: 20000
+scrapeInterval: 10s
+queryInterval: 5s
+scrapeConfigUpdatePercent: 1
+scrapeConfigUpdateInterval: 1m
+writeReplicas: 1
+writeReplicaMem: "16Gi"
+remoteStorages:
+  vm:
+    writeURL: "http://vminsert-gh10297:8480/insert/0/prometheus/"
+    readURL: "http://vmselect-gh10297:8481/select/0/prometheus"
