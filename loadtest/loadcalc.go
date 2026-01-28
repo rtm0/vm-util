@@ -16,8 +16,8 @@ var (
 	targetsCount               = flag.Uint64("targetsCount", 1000, "number of instances to scrape")
 	scrapeInterval             = flag.Duration("scrapeInterval", 10*time.Second, "how often each instance's metrics are scraped and then ingested")
 	scrapeConfigUpdatePercent  = flag.Float64("scrapeConfigUpdatePercent", 1, "the percent of instances that change every scrapeConfigUpdateInterval")
-	scrapeConfigUpdateInterval = flag.Duration("scrapeConfigUpdateInterval", 10*time.Minute, "how often the scrapeConfigUpdatePercent of existing instances is replaced with new ones")
-	seriesPerTarget            = flag.Uint64("seriesPerTarget", 777, "number of unique metrics exported by a single target")
+	scrapeConfigUpdateInterval = flag.Duration("scrapeConfigUpdateInterval", 1*time.Minute, "how often the scrapeConfigUpdatePercent of existing instances is replaced with new ones")
+	seriesPerTarget            = flag.Uint64("seriesPerTarget", 1000, "number of unique metrics exported by a single target")
 )
 
 func main() {
