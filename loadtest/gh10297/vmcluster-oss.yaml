@@ -4,49 +4,45 @@ metadata:
   name: gh10297
   namespace: gh10297
 spec:
-  retentionPeriod: "13"
+  retentionPeriod: "3"
   replicationFactor: 1
-  clusterVersion: "v1.133.0-cluster"
+  clusterVersion: "v1.129.1-cluster"
   vminsert:
-    replicaCount: 3
+    replicaCount: 10
     image:
-      # tag: heads-cluster-0-gddc756d329-dirty-29313ba2
       pullPolicy: Always
     resources:
       requests:
-        cpu: "2"
-        memory: 1Gi
+        cpu: "1"
+        memory: 2Gi
       limits:
-        cpu: "2"
-        memory: 1Gi
+        cpu: "1"
+        memory: 2Gi
   vmselect:
-    replicaCount: 2
+    replicaCount: 7
     image:
       pullPolicy: "Always"
-    extraArgs:
-      search.logSlowQueryDuration: 5m
-      search.maxQueryDuration: 5m
     resources:
       requests:
-        cpu: "4"
+        cpu: "2"
         memory: 8Gi
       limits:
-        cpu: "4"
+        cpu: "2"
         memory: 8Gi
   vmstorage:
-    replicaCount: 8
+    replicaCount: 2
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
-      # tag: heads-cluster-0-g8c87946824-dirty-73252bbc
+      tag: v1.129.1-cluster
       pullPolicy: Always
     resources:
       requests:
-        cpu: "3"
-        memory: 12Gi
+        cpu: "5"
+        memory: 30Gi
       limits:
-        cpu: "3"
-        memory: 12Gi
+        cpu: "6"
+        memory: 50Gi
     storage:
       volumeClaimTemplate:
         spec:
@@ -59,4 +55,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.133.0"
+        tag: "v1.129.1"
