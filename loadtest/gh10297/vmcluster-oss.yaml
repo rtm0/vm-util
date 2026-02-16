@@ -4,13 +4,16 @@ metadata:
   name: gh10297
   namespace: gh10297
 spec:
-  retentionPeriod: "3"
+  retentionPeriod: "60"
   replicationFactor: 1
   clusterVersion: "v1.129.1-cluster"
   vminsert:
     replicaCount: 10
     image:
+      tag: heads-vminsert-timestamp-offset-0-g7dd2a61b5a
       pullPolicy: Always
+    extraArgs:
+      timestampOffset: "0"
     resources:
       requests:
         cpu: "1"
@@ -34,8 +37,14 @@ spec:
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
-      tag: v1.129.1-cluster
+      tag: heads-tfss-loops-cache2-cluster-0-g75f6b6bde7 # 2026-02-11 11:00 UTC cluster HEAD with workingsetcache with metrics
+      # tag: v1.132.0-cluster # 2026-02-04 10:00 UTC switch to 1.132.0
+      # tag: v1.129.1-cluster # 2026-02-02 14:10 UTC switch back to 129.1
+      # tag: v1.132.0-cluster
       pullPolicy: Always
+    extraArgs:
+      dedup.minScrapeInterval: 30s
+      search.maxUniqueTimeseries: "5000000"
     resources:
       requests:
         cpu: "5"
