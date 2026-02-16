@@ -6,55 +6,83 @@ metadata:
 spec:
   retentionPeriod: "6"
   replicationFactor: 1
-  clusterVersion: "v1.132.0-cluster"
+  clusterVersion: "v1.134.0-cluster"
   vminsert:
-    replicaCount: 2
+    replicaCount: 20
     image:
       pullPolicy: Always
     resources:
       requests:
-        cpu: "2"
-        memory: 1Gi
+        cpu: "1"
+        memory: 2Gi
       limits:
-        cpu: "2"
-        memory: 1Gi
+        cpu: "1"
+        memory: 2Gi
   vmselect:
     replicaCount: 2
     image:
       pullPolicy: "Always"
     extraArgs:
-      search.logSlowQueryDuration: 15s
+      search.logSlowQueryDuration: 5m
+      search.maxQueryDuration: 5m
     resources:
       requests:
-        cpu: "4"
+        cpu: "2"
         memory: 8Gi
       limits:
-        cpu: "4"
+        cpu: "2"
         memory: 8Gi
   vmstorage:
-    replicaCount: 2
+    replicaCount: 1
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
-      tag: heads-dmc-rotation-cluster-0-g6486161868
+      tag: heads-cluster-0-g91620eaed5-dirty-cf34836c # 2026-02-16 14:00:00 UTC +sharded dmc
+      # tag: heads-cluster-0-g91620eaed5-dirty-46f7f786 # 2026-02-16 11:40:00 UTC dont rely on prev and curr hourMetricIDs during the ingestion
+      # tag: heads-metric-id-cache-hashing-cluster-0-gb74cbcb1e7 # 2026-02-13 14:30:00 UTC hash optimization
+      # tag: v1.135.0-cluster # 2026-02-13 13:30:00 UTC Try initial fix from 1.135.
+      # tag: v1.134.0-cluster # 2026-02-04 10:00:00 UTC Back to 1.134. Start testing from the beginning but with 7-days of data and 20 vminserts
+      # 2026-02-02 09:00:00 UTC Increase number of vminserts back to 20.
+      # 2026-02-01 18:40:00 UTC Reduce number of vminserts back to 10.
+      # tag: heads-cluster-0-gacffe5c11e-dirty-0fc428ae # 2026-02-01 17:00:00 UTC Cluster HEAD + 20 groups with 1 item (matches num vminserts)
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-70f78cd7 # 2026-02-01 18:00:00 UTC redeployment of + 4x4 = 16 shards only (see below)
+      # tag: heads-cluster-0-gacffe5c11e-dirty-df34f50c   # 2026-02-01 13:15:00 UTC Cluster HEAD + clean fix (num shards == num cpus)
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5       # 2026-02-01 11:30:00 UTC Cluster at the merged fix
+      # tag: tags-v1.134.0-cluster-49-g91f8bbc3d4       # 2026-02-01 09:45:00 UTC Cluster right before the merged fix
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-094b8f09 # 2026-01-31 13:10:00 UTC + 4 groups with 1 shard
+      # 2026-01-31 11:45:00 UTC Increase num inserts to 20
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-305fc7da # 2026-01-31 10:30:00 UTC + 10 groups with 1 shard (num shards matches the num vminserts)
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-4d58e71b # 2026-01-31 09:00:00 UTC + 14 groups with 1 shard (num shards matches the num cores of vmstorage)
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-70f78cd7 # 2026-01-30 18:00:00 UTC + 4x4 = 16 shards only
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-4841bcc3 # 2026-01-30 16:20:00 UTC Cluster at the merged fix + uint64set experiment + bucket16 padding
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5-dirty-fa44dc0f # 2026-01-30 14:45:00 UTC Cluster at the merged fix + uint64set experiment
+      # tag: tags-v1.134.0-cluster-50-g4b4c330ff5       # 2026-01-30 13:30:00 UTC Cluster at the merged fix
+      # tag: v1.134.0-cluster                           # 2026-01-30 13:10:00 UTC (Picked mistakenly)
+      # tag: tags-v1.134.0-cluster-49-g91f8bbc3d4       # 2026-01-30 12:15:00 UTC Cluster right before the merged fix
+      # tag: v1.134.0-cluster                           # 2026-01-30 10:00:00 UTC
+      # tag: heads-cluster-0-ge8fdf05cfc-dirty-5a0d55f7 # 2026-01-29 16:40:00 UTC Cluster HEAD at e8fdf05cfc + cpu-bound shards and groups, fixed rotation group calc
+      # tag: heads-cluster-0-ge8fdf05cfc-dirty-1e2eacff # 2026-01-29 16:00:00 UTC Cluster HEAD at e8fdf05cfc + cpu-bound shards and groups (bug)
+      # tag: heads-cluster-0-ge8fdf05cfc-dirty-178014a8 # 2026-01-29 14:40:00 UTC Cluster HEAD at e8fdf05cfc + Use fastHashUint64 for hashing
+      # tag: heads-cluster-0-ge8fdf05cfc-dirty-78fcf39b # 2026-01-29 07:30:00 UTC Cluster HEAD at e8fdf05cfc + Inital fix (as is). Was given to other user for testing
+      # tag: v1.134.0-cluster                           # 2026-01-28 17:58:00 UTC
       pullPolicy: Always
     resources:
       requests:
-        cpu: "8"
-        memory: 32Gi
+        cpu: "14"
+        memory: 56Gi
       limits:
-        cpu: "8"
-        memory: 32Gi
+        cpu: "14"
+        memory: 56Gi
     storage:
       volumeClaimTemplate:
         spec:
           resources:
             requests:
-              storage: 200Gi
+              storage: 2000Gi
           storageClassName: standard-rwo
   requestsLoadBalancer:
     enabled: true
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.132.0"
+        tag: "v1.134.0"
