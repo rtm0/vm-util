@@ -6,7 +6,7 @@ metadata:
 spec:
   retentionPeriod: "6"
   replicationFactor: 1
-  clusterVersion: "v1.134.0-cluster"
+  clusterVersion: "v1.136.0-cluster"
   vminsert:
     replicaCount: 20
     image:
@@ -37,7 +37,7 @@ spec:
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
-      tag: heads-cluster-0-g91620eaed5-dirty-cf34836c # 2026-02-16 14:00:00 UTC +sharded dmc
+      # tag: heads-cluster-0-g91620eaed5-dirty-cf34836c # 2026-02-16 14:00:00 UTC +sharded dmc
       # tag: heads-cluster-0-g91620eaed5-dirty-46f7f786 # 2026-02-16 11:40:00 UTC dont rely on prev and curr hourMetricIDs during the ingestion
       # tag: heads-metric-id-cache-hashing-cluster-0-gb74cbcb1e7 # 2026-02-13 14:30:00 UTC hash optimization
       # tag: v1.135.0-cluster # 2026-02-13 13:30:00 UTC Try initial fix from 1.135.
@@ -85,4 +85,4 @@ spec:
     spec:
       image:
         pullPolicy: "Always"
-        tag: "v1.134.0"
+        tag: "v1.136.0"
