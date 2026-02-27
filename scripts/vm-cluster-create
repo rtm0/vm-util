@@ -2,7 +2,7 @@
 
 CLUSTER_NAME=${1:-cluster-$(date +%s)}
 ZONE=${2:-us-central1-a}
-NUM_NODES=${3:-4}
+NUM_NODES=${3:-3}
 
 gcloud beta container clusters create ${CLUSTER_NAME} \
     --zone=${ZONE} \

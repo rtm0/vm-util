@@ -1,5 +1,5 @@
 vmtag: v1.136.0
-targetsCount: 15000
+targetsCount: 12000
 scrapeInterval: 10s
 queryInterval: 10s
 scrapeConfigUpdatePercent: 0.04

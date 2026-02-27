@@ -10,7 +10,10 @@ spec:
   vminsert:
     replicaCount: 20
     image:
+      tag: heads-vminsert-timestamp-offset-0-g7dd2a61b5a
       pullPolicy: Always
+    extraArgs:
+      timestampOffset: "86400000"
     resources:
       requests:
         cpu: "1"
@@ -37,6 +40,15 @@ spec:
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
+      # 2026-02-25 12:00:00 UTC back to 1.136.0
+      # tag: heads-dmc-only-cluster-0-gbef1978887 # 2026-02-23 15:25:00 UTC dmc only
+      # 2026-02-23 10:15:00 UTC timestamp offset -rand(86400000)
+      # 2026-02-22 18:30:00 UTC back to 1.136.0
+      # tag: heads-dmc-only-cluster-0-gbef1978887 # 2026-02-20 14:45:00 UTC dmc only
+      # 2026-02-20 ??:??:00 UTC reduce ingestion rate to ~1.5M
+      # 2026-02-20 09:00:00 UTC add one more CPU core
+      # 2026-02-20 08:00:00 UTC back to 1.136.0
+      # tag: heads-dmc-only-cluster-0-gbef1978887 # 2026-02-19 19:30:00 UTC dmc only
       # tag: heads-cluster-0-g91620eaed5-dirty-cf34836c # 2026-02-16 14:00:00 UTC +sharded dmc
       # tag: heads-cluster-0-g91620eaed5-dirty-46f7f786 # 2026-02-16 11:40:00 UTC dont rely on prev and curr hourMetricIDs during the ingestion
       # tag: heads-metric-id-cache-hashing-cluster-0-gb74cbcb1e7 # 2026-02-13 14:30:00 UTC hash optimization
@@ -68,10 +80,10 @@ spec:
       pullPolicy: Always
     resources:
       requests:
-        cpu: "14"
+        cpu: "15"
         memory: 56Gi
       limits:
-        cpu: "14"
+        cpu: "15"
         memory: 56Gi
     storage:
       volumeClaimTemplate:
