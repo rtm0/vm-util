@@ -30,11 +30,39 @@ spec:
         cpu: "2"
         memory: 8Gi
   vmstorage:
-    replicaCount: 2
+    replicaCount: 1
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
+      # 2026-03-18T11:10:00Z change loadgen numInstances from 1000 to 100
+      tag: heads-tfss-loops-lru-cache-cluster-0-g3d43b6d738 # 2026-08-18T10:20:00Z fix lrucache.SizeBytes()
+      # tag: heads-tfss-loops-lru-cache-cluster-0-gf9d1e7ba96 # 2026-08-18T08:30:00Z use lrucache
+      # 2026-03-16T07:00:00Z change loadgen lookbackWindow from 1w to 48h
+      # 2026-03-16T07:00:00Z change loadgen lookbackWindow from 1w to 48h
+      # (now that the deployment actually has 1w of data, the queries
+      # started to take a lot of time. The original deployment did not have
+      # that, thus decreasing the interval)
+      # 2026-08-12T14:50:00Z revert back to v1.137.0
+      # 2026-08-11T09:25:00Z change loadgen lookbackWindow from 72h to 168h (1w)
+      # tag: heads-tfss-loops-lru-cache-cluster-0-gf9d1e7ba96 # 2026-08-11T06:20:00Z use lrucache
+      # 2026-08-10T18:10:00Z change loadgen lookbackWindow from 48h to 72h
+      # 2026-08-10T17:55:00Z change loadgen lookbackWindow from 24h to 48h
+      # 2026-08-10T17:30:00Z change loadgen qps from 500 to 300
+      # 2026-08-10T17:25:00Z change loadgen lookbackWindow from 1h to 24h
+      # Again, the idea is to increase requests to tfssLoops cache. Previous actions did not help.
+      # 2026-08-10T17:10:00Z change scrapeConfigUpdateInterval from 30s to 15s.
+      # 2026-08-10T17:00:00Z change scrapeConfigUpdateInterval from 1m to 30s.
+      # This doubles the churn rate and also makes the new timeseries appear
+      # more frequently. This in turn should reset tfss cache more often which will cause more requests to tfssLoops cache.
+      # 2026-08-10T16:30:00Z decrease query load to 500 qps (1000 cause ingestion rate drop by half)
+      # 2026-08-10T16:20:00Z increase query load to 1000 qps.
+      # 2026-08-10T06:30:00Z revert back to v1.137.0
+      # tag: heads-tfss-loops-lru-cache-cluster-0-gca135e15c0 # 2026-08-09T19:15:00Z increase ttl from 3m to 1h
+      # tag: heads-tfss-loops-lru-cache-cluster-0-g3d43b6d738 # 2026-08-09T18:00:00Z fix lrucache.SizeBytes()
+      # tag: heads-tfss-loops-lru-cache-cluster-0-gf9d1e7ba96 # 2026-08-09T16:15:00Z use lrucache
       pullPolicy: Always
+    extraArgs:
+      search.maxUniqueTimeseries: "1000000"
     resources:
       requests:
         cpu: "5"

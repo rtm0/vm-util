@@ -18,7 +18,7 @@ var (
 	numInstances    = flag.Int("instances", 10, "number of instances that emit metrics from -metrics file")
 	lookbackWindow  = flag.Duration("lookbackWindow", 1*time.Hour, "how far the queries should look in the past starting from now")
 	concurrency     = flag.Int("concurrency", 10, "number of queries send concurrently")
-	qps             = flag.Int("qps", 1000, "number of queries to send per second")
+	qps             = flag.Int("qps", 10, "number of queries to send per second")
 	queryRangeURL   = flag.String("queryRangeURL", "http://localhost:8481/select/0/prometheus/api/v1/query_range", "URL where to send queries")
 )
 
@@ -40,6 +40,7 @@ func main() {
 	rateLimitCh := make(chan struct{}, *qps)
 	queryCh := make(chan string)
 
+	// Create rate limiter.
 	wg.Add(1)
 	go func() {
 		ticker := time.NewTicker(time.Second)
@@ -65,6 +66,7 @@ func main() {
 		}
 	}()
 
+	// Create query generator.
 	wg.Add(1)
 	go func() {
 		for {
@@ -80,6 +82,7 @@ func main() {
 		}
 	}()
 
+	// Create workers.
 	cli := internal.NewClient(logger, internal.ClientOptions{
 		MaxConns:      *concurrency,
 		QueryRangeURL: *queryRangeURL,
@@ -96,6 +99,7 @@ func main() {
 		}()
 	}
 
+	// Wait until SIGINT or SIGTERM is received.
 	signalCh := make(chan os.Signal, 1)
 	signal.Notify(signalCh, os.Interrupt, syscall.SIGTERM)
 	<-signalCh

@@ -30,37 +30,64 @@ func NewQueryGenerator(logger *slog.Logger, opts QueryGeneratorOptions) (*QueryG
 		logger: logger,
 	}
 
-	var err error
+	var numQueries int
 	if opts.QueriesFilePath != "" {
-		qgen.queries, err = loadFromFile(logger, opts.QueriesFilePath)
-	} else {
+		queries, err := loadUniqLinesFromFile(logger, opts.QueriesFilePath)
+		if err != nil {
+			return nil, err
+		}
+		numQueries = len(queries)
+		qgen.queries = queries
+	} else if opts.MetricsFilePath != "" {
+		if opts.NumInstances <= 0 {
+			return nil, fmt.Errorf("unexpected number of instances: got %d, want > 0", opts.NumInstances)
+		}
+		metrics, err := loadUniqLinesFromFile(logger, opts.MetricsFilePath)
+		if err != nil {
+			return nil, err
+		}
+		numQueries = len(metrics) * opts.NumInstances
+		qgen.metrics = metrics
 		qgen.numInstances = opts.NumInstances
-		qgen.metrics, err = loadFromFile(logger, opts.MetricsFilePath)
+	} else {
+		return nil, fmt.Errorf("no queries or metrics file path has been provided")
 	}
 
-	if err != nil {
-		return nil, err
-	}
+	logger.Info("created query generator", "num_uniq_queries", numQueries)
 	return qgen, nil
 }
 
-func loadFromFile(logger *slog.Logger, path string) ([]string, error) {
+func loadUniqLinesFromFile(logger *slog.Logger, path string) ([]string, error) {
 	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
 	defer f.Close()
 
-	var lines []string
+	var (
+		lines     []string
+		sizeBytes int
+	)
+	seen := make(map[string]bool)
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		lines = append(lines, s.Text())
+		l := s.Text()
+		if !seen[l] {
+			seen[l] = true
+			lines = append(lines, l)
+			sizeBytes += len(l)
+		}
 	}
 
 	if err := s.Err(); err != nil {
 		return nil, err
 	}
 
+	if len(lines) == 0 {
+		return nil, fmt.Errorf("file must contain at least one line: %s", path)
+	}
+
+	logger.Info("loaded", "file", path, "uniq_lines", len(lines), "size_bytes", sizeBytes)
 	return lines, nil
 }
 

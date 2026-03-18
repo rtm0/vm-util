@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: loadgen
+  namespace: gh10532
+  labels:
+    app: loadgen
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: loadgen
+  template:
+    metadata:
+      labels:
+        app: loadgen
+    spec:
+      containers:
+      - name: loadgen
+        imagePullPolicy: Always
+        image: rtm0/loadgen:latest@sha256:94597887f4f57894d58e090125eff617dc155e6dfac9336ab7abb072c707f1bd
+        args:
+          - "--metrics=/metrics/metrics.txt"
+          - "--instances=100"
+          - "--qps=100"
+          - "--concurrency=100"
+          - "--lookbackWindow=48h"
+          - "--queryRangeURL=http://vmselect-gh10532:8481/select/0/prometheus/api/v1/query_range"
+        volumeMounts:
+        - name: metrics
+          mountPath: "/metrics"
+          readOnly: true
+      volumes:
+        - name: metrics
+          configMap:
+            name: metrics
