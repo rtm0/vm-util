@@ -1,0 +1,18 @@
+#!/bin/bash
+
+if [[ $# -ne 2 ]]
+then
+	echo "Usage: $(basename $0) NUM_QUERIES NUM_INSTANCES"
+	exit 1
+fi
+
+NUM_QUERIES=$1
+NUM_INSTANCES=$2
+METRIC_NAMES=$(realpath $(dirname $0))/metrics.txt
+
+for ((i=0; i < $NUM_QUERIES; i++))
+do
+	metric_name="$(shuf -n 1 $METRIC_NAMES)"
+	instance="host-$(shuf -i 0-$((NUM_INSTANCES-1)) -n 1)"
+	echo "${metric_name}{revision=~\"r.*\", instance=~\"[aaa]*${instance}\"}"
+done

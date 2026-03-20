@@ -20,17 +20,52 @@ spec:
         imagePullPolicy: Always
         image: rtm0/loadgen:latest@sha256:94597887f4f57894d58e090125eff617dc155e6dfac9336ab7abb072c707f1bd
         args:
-          - "--metrics=/metrics/metrics.txt"
-          - "--instances=100"
+          - "--queries=/queries-06-10000-4000-100/queries-06-10000-4000-100.txt"
           - "--qps=100"
           - "--concurrency=100"
-          - "--lookbackWindow=48h"
+          - "--lookbackWindow=1h"
           - "--queryRangeURL=http://vmselect-gh10532:8481/select/0/prometheus/api/v1/query_range"
         volumeMounts:
         - name: metrics
           mountPath: "/metrics"
           readOnly: true
+        - name: queries-01-10000-4000
+          mountPath: "/queries-01-10000-4000"
+          readOnly: true
+        - name: queries-02-10000-4000
+          mountPath: "/queries-02-10000-4000"
+          readOnly: true
+        - name: queries-03-10000-4000
+          mountPath: "/queries-03-10000-4000"
+          readOnly: true
+        - name: queries-04-10000-4000
+          mountPath: "/queries-04-10000-4000"
+          readOnly: true
+        - name: queries-05-10000-4000
+          mountPath: "/queries-05-10000-4000"
+          readOnly: true
+        - name: queries-06-10000-4000-100
+          mountPath: "/queries-06-10000-4000-100"
+          readOnly: true
       volumes:
         - name: metrics
           configMap:
             name: metrics
+        - name: queries-01-10000-4000
+          configMap:
+            name: queries-01-10000-4000
+        - name: queries-02-10000-4000
+          configMap:
+            name: queries-02-10000-4000
+        - name: queries-03-10000-4000
+          configMap:
+            name: queries-03-10000-4000
+        - name: queries-04-10000-4000
+          configMap:
+            name: queries-04-10000-4000
+        - name: queries-05-10000-4000
+          configMap:
+            name: queries-05-10000-4000
+        - name: queries-06-10000-4000-100
+          configMap:
+            name: queries-06-10000-4000-100

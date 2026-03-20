@@ -1,0 +1,32 @@
+#!/bin/bash
+
+if [[ $# -ne 3 ]]
+then
+	echo "Usage: $(basename $0) NUM_QUERIES NUM_INSTANCES NUM_HEAVY_QUERIES"
+	exit 1
+fi
+
+NUM_QUERIES=$1
+NUM_INSTANCES=$2
+NUM_HEAVY_QUERIES=$3
+
+if [[ $NUM_HEAVY_QUERIES -le 0 || $NUM_HEAVY_QUERIES -gt $NUM_QUERIES ]]
+then
+	echo "NUM_HEAVY_QUERIES must be in the range (0, NUM_QUERIES]"
+	exit 1
+fi
+
+METRIC_NAMES=$(realpath $(dirname $0))/metrics.txt
+HEAVY_QUERY=$((NUM_QUERIES / NUM_HEAVY_QUERIES))
+
+for ((i=0; i < $NUM_QUERIES; i++))
+do
+	metric_name="$(shuf -n 1 $METRIC_NAMES)"
+	instance="host-$(shuf -i 0-$((NUM_INSTANCES-1)) -n 1)"
+	if [[ $((i % $HEAVY_QUERY)) -eq 0 ]]
+	then
+		echo "${metric_name}{replica=\"0\", instance=~\"[abc]*${instance}\"}"
+	else
+		echo "${metric_name}{replica=\"0\", job=\"node_exporter\", instance=\"${instance}\"}"
+	fi
+done

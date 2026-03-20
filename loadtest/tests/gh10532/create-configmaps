@@ -1,0 +1,19 @@
+#!/bin/bash
+
+LOADTEST=$(realpath $(dirname $0)/../../)
+
+METRICS=${LOADTEST}/data/metrics.txt
+QUERIES_01_10000_4000=${LOADTEST}/tests/gh10532/queries-01-10000-4000.txt
+QUERIES_02_10000_4000=${LOADTEST}/tests/gh10532/queries-02-10000-4000.txt
+QUERIES_03_10000_4000=${LOADTEST}/tests/gh10532/queries-03-10000-4000.txt
+QUERIES_04_10000_4000=${LOADTEST}/tests/gh10532/queries-04-10000-4000.txt
+QUERIES_05_10000_4000=${LOADTEST}/tests/gh10532/queries-05-10000-4000.txt
+QUERIES_06_10000_4000_100=${LOADTEST}/tests/gh10532/queries-06-10000-4000-100.txt
+
+# kubectl -n gh10532 create configmap metrics --from-file=${METRICS}
+# kubectl -n gh10532 create configmap queries-01-10000-4000 --from-file=${QUERIES_01_10000_4000}
+# kubectl -n gh10532 create configmap queries-02-10000-4000 --from-file=${QUERIES_02_10000_4000}
+# kubectl -n gh10532 create configmap queries-03-10000-4000 --from-file=${QUERIES_03_10000_4000}
+# kubectl -n gh10532 create configmap queries-04-10000-4000 --from-file=${QUERIES_04_10000_4000}
+# kubectl -n gh10532 create configmap queries-05-10000-4000 --from-file=${QUERIES_05_10000_4000}
+kubectl -n gh10532 create configmap queries-06-10000-4000-100 --from-file=${QUERIES_06_10000_4000_100}

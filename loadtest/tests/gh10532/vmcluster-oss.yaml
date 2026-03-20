@@ -34,8 +34,12 @@ spec:
     rollingUpdateStrategyBehavior:
       maxUnavailable: 100%
     image:
+      tag: heads-tfss-loops-lru-cache-cluster-0-gf9d1e7ba96 # 2026-08-19T16:45:00Z use lrucache
+      # 2026-08-18T18:50:00Z revert back to v1.137.0
+      # tag: heads-tfss-loops-lru-cache-cluster-0-gf9d1e7ba96 # 2026-08-18T17:30:00Z use lrucache
+      # 2026-08-18T16:50:00Z revert back to v1.137.0
       # 2026-03-18T11:10:00Z change loadgen numInstances from 1000 to 100
-      tag: heads-tfss-loops-lru-cache-cluster-0-g3d43b6d738 # 2026-08-18T10:20:00Z fix lrucache.SizeBytes()
+      # tag: heads-tfss-loops-lru-cache-cluster-0-g3d43b6d738 # 2026-08-18T10:20:00Z fix lrucache.SizeBytes()
       # tag: heads-tfss-loops-lru-cache-cluster-0-gf9d1e7ba96 # 2026-08-18T08:30:00Z use lrucache
       # 2026-03-16T07:00:00Z change loadgen lookbackWindow from 1w to 48h
       # 2026-03-16T07:00:00Z change loadgen lookbackWindow from 1w to 48h
@@ -66,10 +70,10 @@ spec:
     resources:
       requests:
         cpu: "5"
-        memory: 20Gi
+        memory: 30Gi
       limits:
         cpu: "5"
-        memory: 20Gi
+        memory: 30Gi
     storage:
       volumeClaimTemplate:
         spec:
