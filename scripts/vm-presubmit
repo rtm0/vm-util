@@ -1,4 +1,4 @@
 #!/bin/bash
 
-make victoria-metrics vmstorage vminsert vmselect
+make clean victoria-metrics vmstorage vminsert vmselect
 make check-all test apptest apptest-legacy
