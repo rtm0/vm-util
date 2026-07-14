@@ -1,4 +1,5 @@
 #!/bin/bash
 
+rm -Rf ~/.cache/golangci-lint
 make clean victoria-metrics vmstorage vminsert vmselect
-make check-all test apptest apptest-legacy
+make check-all test apptest apptest-legacy apptest-mixed
